@@ -29,14 +29,9 @@ def get_data(request, currentuser, service_user):
         totimestamp = totimestamp/1000
     else:
         #totimestamp = calendar.timegm(datetime.today().utctimetuple())
-<<<<<<< HEAD
-        totimestamp = unix_time(datetime.today())
-        #totimestamp = datetime.today().strftime('%s')
-=======
+
         #totimestamp = unix_time(datetime.today())
         totimestamp = datetime.datetime.today().strftime('%s')
->>>>>>> 3de68c80d5d60537d13f162ae52ee687b7e5b4a5
-
     print "fromtimestamp: ", fromtimestamp
     print "totimestamp: ", totimestamp
 
@@ -56,23 +51,12 @@ def get_data(request, currentuser, service_user):
     tagged_places = get_tagged_places(fromtimestamp, totimestamp, request.get('access_token'))
     print "Getting events...."
     events = get_events(fromtimestamp, totimestamp, request.get('access_token'))
-<<<<<<< HEAD
-    events.sort(key=itemgetter('start_time'), reverse=latestFirst)
-    #inbox = get_inbox(fromtimestamp, totimestamp, request.get('access_token'))  #unavailable post v2.4
-    #inbox=[]
-=======
     try:
         events.sort(key=itemgetter('start_time'), reverse=latestFirst)
     except Exception as e:
         pass
-    print "Getting inbox threads...."
-    inbox = get_inbox(fromtimestamp, totimestamp, request.get('access_token'))
-    print "Getting inbox all messages"
-    inbox_messages=[]
-    #inbox_messages = get_inbox_messages(inbox, fromtimestamp, totimestamp, request.get('access_token'))
     print "Getting user's wall...."
     #feed=[]
->>>>>>> 3de68c80d5d60537d13f162ae52ee687b7e5b4a5
     feed = get_user_wall(fromtimestamp, totimestamp, request.get('access_token'))
     try:
         feed.sort(key=itemgetter('created_time'), reverse=latestFirst)
@@ -80,35 +64,12 @@ def get_data(request, currentuser, service_user):
         pass
     print "Getting photos...."
     photos = get_photos(fromtimestamp, totimestamp, request.get('access_token'))
-<<<<<<< HEAD
-    photos.sort(key=itemgetter('created_time'), reverse=latestFirst)
-    #home = get_standard_data('home', fromtimestamp, totimestamp, request.get('access_token')) #unavailable post v2.4
-    #home.sort(key=itemgetter('created_time'), reverse=latestFirst)
-    #notes =get_standard_data('notes', fromtimestamp, totimestamp, request.get('access_token'))
-    #notes.sort(key=itemgetter('created_time'), reverse=latestFirst)
-    #statuses = get_standard_data('statuses', fromtimestamp, totimestamp, request.get('access_token')) #deprecated post v2.4
-    #statuses.sort(key=itemgetter('updated_time'), reverse=latestFirst)
-    #links = get_standard_data('links', fromtimestamp, totimestamp, request.get('access_token')) #deprecated post v2.4
-    #links.sort(key=itemgetter('created_time'), reverse=latestFirst)
-=======
     try:
         photos.sort(key=itemgetter('created_time'), reverse=latestFirst)
     except Exception as e:
         pass
-    print "Getting statuses...."
-    statuses = get_standard_data('statuses', fromtimestamp, totimestamp, request.get('access_token'))
-    try:
-        statuses.sort(key=itemgetter('updated_time'), reverse=latestFirst)
-    except Exception as e:
-        pass
-    print "Getting links...."
-    links = get_standard_data('links', fromtimestamp, totimestamp, request.get('access_token'))
-    try:
-        links.sort(key=itemgetter('created_time'), reverse=latestFirst)
-    except Exception as e:
-        pass
+
     print "Getting posts...."
->>>>>>> 3de68c80d5d60537d13f162ae52ee687b7e5b4a5
     posts = get_standard_data('posts', fromtimestamp, totimestamp, request.get('access_token'))
     try:
         posts.sort(key=itemgetter('created_time'), reverse=latestFirst)
@@ -126,43 +87,22 @@ def get_data(request, currentuser, service_user):
         pass
     
 
-    data = process_data(request=request, currentuser=currentuser, service_user=service_user, data=data, events=events, feed=feed, photos=photos, posts=posts, friends=friends, groups=groups, albums=albums)
+    data = process_data(request=request, currentuser=currentuser, service_user=service_user, data=data, events=events, feed=feed ,photos=photos, posts=posts, friends=friends, groups=groups, albums=albums)
 
     return data
         
 
-<<<<<<< HEAD
 def process_data(request, currentuser, service_user, data, events, feed, photos, posts, friends, groups, albums):
-=======
-def process_data(request, currentuser, service_user, data, events, feed, photos, home, statuses, links, posts, friends, groups, albums, inbox, tagged_places, inbox_messages):
     print 'Process Facebook data'
->>>>>>> 3de68c80d5d60537d13f162ae52ee687b7e5b4a5
     queue = []
     queue.append(events)
     queue.append(feed)
     queue.append(photos)
-<<<<<<< HEAD
-    #queue.append(home)
-    #queue.append(notes)
-    #queue.append(links)
-    #queue.append(statuses)
-=======
-    queue.append(home)
-    queue.append(links)
-    queue.append(statuses)
->>>>>>> 3de68c80d5d60537d13f162ae52ee687b7e5b4a5
     queue.append(posts)
     queue.append(friends)
     queue.append(groups)
     queue.append(albums)
-<<<<<<< HEAD
-    #queue.append(inbox)
-=======
-    queue.append(inbox)
-    queue.append(inbox_messages)
     queue.append(tagged_places)
-
->>>>>>> 3de68c80d5d60537d13f162ae52ee687b7e5b4a5
 
     count = 0
     counter=0
@@ -184,81 +124,11 @@ def process_data(request, currentuser, service_user, data, events, feed, photos,
                 feed = category
                 idr = '%s:%s@facebook/feed#%s'%(item['type'],service_user.userid, item['id'])
                 data_type = 'FEED'
-<<<<<<< HEAD
-            # elif category == inbox:
-            #     item = category.pop(0)
-            #     inbox = category
-            #     idr = 'inbox:%s@facebook/inbox#%s'%(service_user.userid, item['id'])
-            #     data_type = 'INBOX'
-            #     data.append(item)
-=======
-                print 'Process Feeds'
-            elif category == inbox:
-                item = category.pop(0)
-                inbox = category
-                idr = 'inbox:%s@facebook/inbox#%s'%(service_user.userid, item['id'])
-                data_type = 'INBOX'
-                print 'Process Inbox'
-            elif category == inbox_messages:
-                item = category.pop(0)
-                inbox_messages = category
-                idr = 'inbox_messages:%s@facebook/inbox_messages#%s'%(service_user.userid, item['id'])
-                data_type = 'INBOX_MSG'
-                print 'Process Inbox messages'
->>>>>>> 3de68c80d5d60537d13f162ae52ee687b7e5b4a5
             elif category == photos:
                 item = category.pop(0)
                 photos = category
                 idr = 'photo:%s@facebook/photos#%s'%(service_user.userid, item['id'])
                 data_type = 'PHOTO'
-<<<<<<< HEAD
-            # elif category == home:
-            #     item = category.pop(0)
-            #     home = category
-            #     idr = '%s:%s@facebook/home#%s'%(item['type'],service_user.userid, item['id'])
-            #     data_type = 'HOME'
-            #elif category == notes:
-                #item = category.pop(0)
-                #notes = category
-                #idr = 'note:%s@facebook/notes#%s'%(service_user.userid, item['id'])
-                #data_type = 'NOTE'
-            # elif category == links:
-            #     item = category.pop(0)
-            #     links = category
-            #     idr = 'link:%s@facebook/links#%s'%(service_user.userid, item['id'])
-            #     data_type = 'LINK'
-            # elif category == statuses:
-            #     item = category.pop(0)
-            #     statuses = category
-            #     idr = 'status:%s@facebook/statuses#%s'%(service_user.userid, item['id'])
-            #     data_type = 'STATUS'
-=======
-                print 'Process Photos'
-            elif category == home:
-                item = category.pop(0)
-                home = category
-                idr = '%s:%s@facebook/home#%s'%(item['type'],service_user.userid, item['id'])
-                data_type = 'HOME'
-                print 'Process Home'
-            elif category == tagged_places:
-                item = category.pop(0)
-                tagged_places = category
-                idr = '%s:%s@facebook/tagged_places#%s'%(service_user.userid, item['id'])
-                data_type = 'TAGGED_PLACES'
-                print 'Process tagged_places'
-            elif category == links:
-                item = category.pop(0)
-                links = category
-                idr = 'link:%s@facebook/links#%s'%(service_user.userid, item['id'])
-                data_type = 'LINK'
-                print 'Process Links'
-            elif category == statuses:
-                item = category.pop(0)
-                statuses = category
-                idr = 'status:%s@facebook/statuses#%s'%(service_user.userid, item['id'])
-                data_type = 'STATUS'
-                print 'Process Statuses'
->>>>>>> 3de68c80d5d60537d13f162ae52ee687b7e5b4a5
             elif category == posts:
                 item = category.pop(0)
                 posts = category
@@ -379,13 +249,8 @@ def get_inbox(fromtimestamp, totimestamp, access_token):
 
 
 def get_events(fromtimestamp, totimestamp, access_token):
-<<<<<<< HEAD
     fields = 'description,id,end_time,place,name,owner,rsvp_status,start_time'
     url = 'https://graph.facebook.com/me/events?limit=1000&access_token=%s'%access_token
-=======
-    fields = 'description,id,end_time,name,owner,rsvp_status,start_time' #location, venue
-    url = 'https://graph.facebook.com/me/events?access_token=%s'%access_token
->>>>>>> 3de68c80d5d60537d13f162ae52ee687b7e5b4a5
     #if fromtimestamp is not None:
     #    url += '&since=%s'%fromtimestamp
     #url += '&until=%s'%totimestamp
