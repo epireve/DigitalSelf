@@ -10,7 +10,7 @@ from operator import *
 
 
 def unix_time(dt):
-    epoch = datetime.datetime.utcfromtimestamp(0)
+    epoch = datetime.date.fromtimestamp(0)
     delta = dt - epoch
     return long(delta.total_seconds())
 
@@ -30,8 +30,8 @@ def get_data(request, currentuser, service_user):
     else:
         #totimestamp = calendar.timegm(datetime.today().utctimetuple())
 
-        #totimestamp = unix_time(datetime.today())
-        totimestamp = datetime.datetime.today().strftime('%s')
+        totimestamp = unix_time(datetime.date.today())
+        #totimestamp = datetime.datetime.today().strftime('%s')
     print "fromtimestamp: ", fromtimestamp
     print "totimestamp: ", totimestamp
 
@@ -40,13 +40,13 @@ def get_data(request, currentuser, service_user):
     if fromtimestamp is not None:
         latestFirst = False
         print 'Getting news feed....'
-    #home=[]
-    print "Getting home...."
-    home = get_standard_data('home', fromtimestamp, totimestamp,request.get('access_token'))
-    try:
-        home.sort(key=itemgetter('created_time'), reverse=latestFirst)
-    except Exception as e:
-        pass
+    home=[]
+    # print "Getting home...."
+    # home = get_standard_data('home', fromtimestamp, totimestamp,request.get('access_token'))
+    # try:
+    #     home.sort(key=itemgetter('created_time'), reverse=latestFirst)
+    # except Exception as e:
+    #     pass
     print "Getting tagged places...."
     tagged_places = get_tagged_places(fromtimestamp, totimestamp, request.get('access_token'))
     print "Getting events...."
@@ -87,12 +87,12 @@ def get_data(request, currentuser, service_user):
         pass
     
 
-    data = process_data(request=request, currentuser=currentuser, service_user=service_user, data=data, events=events, feed=feed ,photos=photos, posts=posts, friends=friends, groups=groups, albums=albums)
+    data = process_data(request=request, currentuser=currentuser, service_user=service_user, data=data, events=events, feed=feed ,photos=photos, posts=posts, friends=friends, groups=groups, albums=albums, tagged_places=tagged_places)
 
     return data
         
 
-def process_data(request, currentuser, service_user, data, events, feed, photos, posts, friends, groups, albums):
+def process_data(request, currentuser, service_user, data, events, feed, photos, posts, friends, groups, albums, tagged_places):
     print 'Process Facebook data'
     queue = []
     queue.append(events)
@@ -274,7 +274,7 @@ def get_standard_data(field, fromtimestamp, totimestamp, access_token):
     if field=='home':
 		oneDayAgo = datetime.datetime.today() - datetime.timedelta(1)
 		print "two days ago= ", oneDayAgo
-		fromtimestamp = oneDayAgo.strftime('%s')
+		fromtimestamp = oneDayAgo.strftime('%S')
 		
 
 		url = 'https://graph.facebook.com/me/home?access_token=%s'%access_token

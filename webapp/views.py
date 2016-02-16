@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
-from forms import GetDataForm, KeywordSearchForm, SERVICE_CHOICES
+from forms import GetDataForm, KeywordSearchForm, REGISTER_CHOICES
 from neemi.data import get_user_data, get_all_user_data
 from neemi.search import simple_keyword_search
 from neemi.stats import *
@@ -14,7 +14,7 @@ def index(request, template='index.html'):
         )
     return response
 
-def register(request, template='register.html')
+def register(request, template='register.html'):
     services = REGISTER_CHOICES
     response = render_to_response(
             template, locals(), context_instance=RequestContext(request)
