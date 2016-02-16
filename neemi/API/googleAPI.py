@@ -14,15 +14,15 @@ except ImportError: import json
 # pip install --upgrade google-api-python-client
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.file import Storage
-from oauth2client.tools import run
+#from oauth2client.tools import run
 from apiclient.discovery import build
 
 # Google Data API
 # pip install gdata
 import atom
-from atom.http import ProxiedHttpClient
+#from atom.http import ProxiedHttpClient
 
-import atom.data
+#import atom.data
 import gdata.data
 import gdata.contacts.client
 import gdata.contacts.data

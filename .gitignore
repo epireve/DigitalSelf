@@ -2,3 +2,6 @@
 credentials.dat
 statistic.txt
 .DS_Store
+my_settings.py
+.idea
+webapp/keys.py

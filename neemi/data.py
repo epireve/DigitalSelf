@@ -21,6 +21,8 @@ from API.googleAPIData import *
 
 from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
 from mongoengine.django.auth import User
+from mongoengine.django.mongo_auth.models import *
+from mongoengine.document import Document
 
 #### THIS METHOD IS NOT BEING CALLED ANYWHERE
 def get_all_user_data(request,service):

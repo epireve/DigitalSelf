@@ -1,6 +1,7 @@
 # Django settings for python_django_skeleton project.
 import os
 from keys import *
+from my_settings import *
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -157,7 +158,7 @@ SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SAVE_EVERY_REQUEST = True
 
 # Use MongoUser as the user model
-#AUTH_USER_MODEL = 'mongo_auth.MongoUser' NOT WORKING YET
+AUTH_USER_MODEL = 'mongo_auth.MongoUser'# NOT WORKING YET
 MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
 
 # A sample logging configuration. The only tangible logging
