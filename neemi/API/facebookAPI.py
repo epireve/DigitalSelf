@@ -50,6 +50,7 @@ class FacebookHelper():
 		f = urllib2.urlopen(url) 
 		json_string = f.read() 
 		user = loads(json_string)
+		print "user = ", user
 		f.close()
 		return user['id'], user['name']
 
