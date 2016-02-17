@@ -20,9 +20,7 @@ def simple_keyword_search(request,keyword,service=None):
         #facebook_items = FacebookData.objects(data_type='FEED')
         #facebook_items = mongo_db.command('text', 'facebook_data', search=keyword)
         #facebook_items = FacebookData.objects.command('text',
-        curid = currentuser.id
-        facebook_user = FacebookUser.objects.get(neemi_user=currentuser.id)
-        facebook_items = FacebookData.objects.all()
+        facebook_items = FacebookData.objects(neemi_user=currentuser.id)
         for item in facebook_items:
             # print item
             print '----'

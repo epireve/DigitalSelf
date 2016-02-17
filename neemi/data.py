@@ -144,17 +144,17 @@ def get_user_data(request,service,from_date=None,to_date=None,lastN=None):
 def getFacebookProfile(request):
         print 'Get profile from Facebook'
         currentuser = User.objects.get(username=request.user.username)
-        facebook_user = FacebookUser.objects.get(neemi_user=currentuser.id)
+        facebook_user = FacebookUser.objects.get(neemi_user=currentuser)
         facebook = FacebookHelper()
         service_profile = facebook.make_request(access_token=facebook_user.access_token, request=request)        
 
-        service_user, created = FacebookUser.objects.get_or_create(neemi_user=currentuser.id, access_token=facebook_user.access_token)
+        service_user, created = FacebookUser.objects.get_or_create(neemi_user=currentuser, access_token=facebook_user.access_token)
         #service_user.data = service_profile
 	idr = 'profile:%s@facebook'%(service_user.userid)
 	try:
 		facebook_id = FacebookData.objects.get(idr=idr)
 	except FacebookData.DoesNotExist:
-		facebook_id = FacebookData(idr=idr, data=service_profile, neemiuser=currentuser.id, facebook_user=service_user, data_type='PROFILE', 
+		facebook_id = FacebookData(idr=idr, data=service_profile, neemi_user=currentuser, facebook_user=service_user, data_type='PROFILE',
 			time=datetime.datetime.today()).save()
         #service_user.since = datetime.datetime.today()
         service_user.save()

@@ -159,7 +159,7 @@ def process_data(request, currentuser, service_user, data, events, feed, photos,
             try:
                 facebook_id = FacebookData.objects.get(idr=idr)
             except FacebookData.DoesNotExist:
-                facebook_id = FacebookData(idr=idr, data=item, neemiuser=currentuser.id, facebook_user=service_user, data_type=data_type,
+                facebook_id = FacebookData(idr=idr, data=item, neemi_user=currentuser, facebook_user=service_user, data_type=data_type,
                         time=datetime.datetime.today()).save()
                 count += 1
             data.append(item)
