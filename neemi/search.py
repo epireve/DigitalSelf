@@ -9,6 +9,8 @@ from mongoengine.connection import get_db
 from pymongo import MongoClient
 
 from models import *
+from django.utils.dateparse import parse_datetime
+import datetime
 
 def simple_keyword_search(request,keyword,service=None):
     url = '/search/'
@@ -24,7 +26,23 @@ def simple_keyword_search(request,keyword,service=None):
         for item in facebook_items:
             # print item
             print '----'
-            print item.time
+            if item.data_type=='PHOTO':
+                print "Found a photo"
+                if 'event' in item.data:
+                    print "Photo has an associated event %s" % item.data['event']
+                print item.data['created_time']
+                if 'backdated_time' in item.data:
+                    print "Backdated time :%s" %item.data['backdated_time']
+                related = related_to_fb_photo(request, item)
+                print "Found %s related items" % len(related)
+            elif item.data_type=='EVENT':
+                print "Found an event"
+            elif item.data_type=='FRIEND':
+                print "Found friends"
+            elif item.data_type=='ALBUM':
+                print "Found an album"
+            else:
+                print item.data_type
             #print item._data['time']
             #if item._data.has_field('message'):
             #    print item.message
@@ -32,4 +50,31 @@ def simple_keyword_search(request,keyword,service=None):
     else:
         results = None
     return HttpResponseRedirect(url)
-        
+
+def related_to_fb_photo(request, photo):
+    related = set()
+    related.add(photo)
+    createdtime = parse_datetime(photo.data['created_time'])
+    currentuser = User.objects.get(username=request.user.username)
+    fbphotos = FacebookData.objects(neemi_user=currentuser.id, data_type='PHOTO')
+    albumid = ""
+    if 'album' in photo.data:
+        print "Photo has an album"
+        albumid = photo.data['album']['id']
+        try:
+            album = FacebookData.objects(data__id = albumid).get()
+            related.add(album)
+        except DoesNotExist:
+            print "Album does not exist in database"
+    for item in fbphotos:
+        created_delta = parse_datetime(item.data['created_time']) - createdtime
+        if abs(created_delta).days == 0 :
+            related.add(item)
+            print "Found related photo by created time"
+        elif 'event' in item.data and 'event' in photo.data and photo.data['event']==item.data['event']:
+            related.add(item).add(photo.data['event'])
+            print "Found related photo by event, and related event"
+        elif 'album' in item.data and item.data['album']['id']==albumid:
+            related.add(item)
+            print "Found related photo in the same album"
+    return related

@@ -357,7 +357,7 @@ def get_user_wall (fromtimestamp, totimestamp, access_token):
 def get_photos(fromtimestamp, totimestamp, access_token):
     #photos = []   
     
-    fields = 'album,from,id,name,created_time,name_tags,place,source,link,updated_time,tags'
+    fields = 'album,backdated_time,backdated_time_granularity,from,id,name,created_time,name_tags,place,images,link,updated_time,tags'
     url = 'https://graph.facebook.com/me/photos?access_token=%s'%access_token
     #if fromtimestamp is not None:
     #    url += '&since=%s'%fromtimestamp
