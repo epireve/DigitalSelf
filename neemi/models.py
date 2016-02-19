@@ -162,6 +162,13 @@ class FacebookData(DynamicDocument):
     TYPE = ('FEED','PHOTO','ALBUM','CHECKIN','EVENT','FRIEND','FAMILY','GROUP','INBOX','LINK','NOTE','POST','STATUS','HOME','PROFILE')
     data_type = StringField(max_length=12, choices = TYPE)
     meta = {'allow_inheritance': True}
+
+    def __unicode__(self):
+        str = "%s " % self.data_type
+        if 'created_time' in self.data:
+            str += "%s " % self.data['created_time']
+        str += self.data['id']
+        return str
   
 
 class FoursquareData(DynamicDocument):

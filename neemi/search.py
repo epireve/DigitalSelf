@@ -11,6 +11,7 @@ from pymongo import MongoClient
 from models import *
 from django.utils.dateparse import parse_datetime
 import datetime
+from geopy.geocoders.googlev3 import *
 
 def simple_keyword_search(request,keyword,service=None):
     url = '/search/'

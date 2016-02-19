@@ -1,10 +1,11 @@
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
-from forms import GetDataForm, KeywordSearchForm, REGISTER_CHOICES
+from forms import GetDataForm, KeywordSearchForm, REGISTER_CHOICES, PhotoSelectionForm
 from neemi.data import get_user_data, get_all_user_data
 from neemi.search import simple_keyword_search
 from neemi.stats import *
+from neemi.models import *
 import time, datetime
 
 def index(request, template='index.html'):
@@ -40,6 +41,23 @@ def search(request, template='search.html'):
         
     response = render_to_response(
     template, locals(), context_instance=RequestContext(request,{'form':dform})
+        )
+    return response
+
+def photo(request, template='photo.html'):
+    user = request.user
+    if request.method == 'POST':
+        form = PhotoSelectionForm(request.POST, user=user)
+        if form.is_valid():
+            print "GOOD DATA"
+            dform = form
+        else:
+            print "invalid form"
+            dform = PhotoSelectionForm()
+    else:
+        dform = PhotoSelectionForm(user=user)
+    response = render_to_response(
+        template, locals(), context_instance=RequestContext(request,{'form':dform})
         )
     return response
 

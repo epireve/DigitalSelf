@@ -14,7 +14,8 @@ urlpatterns = patterns('webapp.views',
     url(r'^search/$', 'search', name='search'),
     url(r'^delete/$', 'delete', name='delete'),
     url(r'^error/$', 'error', name='error'),
-    url(r'^get_stats/$', 'get_stats', name='get_stats')
+    url(r'^get_stats/$', 'get_stats', name='get_stats'),
+    url(r'^photo/$', 'photo', name='photo')
 )
 
 urlpatterns += patterns('',
