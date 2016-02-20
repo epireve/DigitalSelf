@@ -165,8 +165,10 @@ class FacebookData(DynamicDocument):
 
     def __unicode__(self):
         str = "%s " % self.data_type
-        if 'created_time' in self.data:
-            str += "%s " % self.data['created_time']
+        if 'backdated_time' in self.data:
+            str += "dated %s " % self.data['backdated_time']
+        elif 'created_time' in self.data:
+            str += "uploaded %s " % self.data['created_time']
         str += self.data['id']
         return str
   

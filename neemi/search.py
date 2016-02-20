@@ -59,6 +59,8 @@ def related_to_fb_photo(request, photo):
     currentuser = User.objects.get(username=request.user.username)
     fbphotos = FacebookData.objects(neemi_user=currentuser.id, data_type='PHOTO')
     albumid = ""
+    if photo.data['id'] == "DUMMY":
+        print "Contextualizing mock photo"
     if 'album' in photo.data:
         print "Photo has an album"
         albumid = photo.data['album']['id']

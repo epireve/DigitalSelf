@@ -1,12 +1,13 @@
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
-from forms import GetDataForm, KeywordSearchForm, REGISTER_CHOICES, PhotoSelectionForm
-from neemi.data import get_user_data, get_all_user_data
+from forms import GetDataForm, KeywordSearchForm, REGISTER_CHOICES, PhotoSelectionForm, FBPhotoCreateForm, FBEventCreateForm
+from neemi.data import get_user_data, get_all_user_data, getFacebookProfile
 from neemi.search import simple_keyword_search
 from neemi.stats import *
 from neemi.models import *
 import time, datetime
+from mongoengine.base import BaseDict
 
 def index(request, template='index.html'):
 
@@ -58,6 +59,99 @@ def photo(request, template='photo.html'):
         dform = PhotoSelectionForm(user=user)
     response = render_to_response(
         template, locals(), context_instance=RequestContext(request,{'form':dform})
+        )
+    return response
+
+def add_fb_photo(request, template='add_fb_photo.html'):
+    user = request.user
+    if request.method == 'POST':
+        form = FBPhotoCreateForm(request.POST, user=user)
+        if form.is_valid():
+            service_user = getFacebookProfile(request=request)
+            currentuser = User.objects.get(username=request.user.username)
+            idr = 'photo:%s@facebook/photos#DUMMY' % service_user.userid
+            data = form.cleaned_data
+            backdated_time = data['backdatedDateTime'].strftime("%Y-%m-%dT%H:%M:%S+0000")
+            granularity = data['backdatedDateTimeGranularity']
+            if data['createdDateTime']:
+                created_time=data['createdDateTime'].strftime("%Y-%m-%dT%H:%M:%S+0000")
+            else:
+                created_time=backdated_time
+            caption = data['caption']
+            try:
+                fbprofile=FacebookData.objects.get(data_type='PROFILE', neemi_user=currentuser.id,idr = 'profile:%s@facebook'%(service_user.userid))
+                me = fbprofile.data['name']
+            except FacebookData.DoesNotExist:
+                me = "me"
+            if data['uploadedBy'] and data['uploadedBy'] != "Me":
+                uploaded_by = data['uploadedBy']
+            else:
+                uploaded_by = me
+            from_dict = dict([('id', "DUMMY"), ('name', uploaded_by)])
+            tagsdata = []
+            if data['tags']:
+                for tag in data['tags'].split(','):
+                    tagdict = dict([('id', "DUMMY") ,('name', tag)])
+                    tagsdata.append(tagdict)
+            tags=dict([('data', tagsdata)])
+            event=None
+            if data['event']:
+                event = dict([('data', data['event']['data'])])
+            location_fields = ("name", "street", "zip", "city", "state", "country", "latitude", "longitude")
+            location = dict((i, None) for i in location_fields )
+            for field in location_fields:
+                if data[field]:
+                    location[field]=data[field]
+            place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
+            photodata = dict([('backdated_time', backdated_time), ('backdated_time_granularity', granularity), ('created_time', created_time), ('from', from_dict),('id', "DUMMY"), ('place', place),('tags', tags), ('name', caption)])
+            newphoto = FacebookData(idr=idr, data=photodata, neemi_user=currentuser, facebook_user=service_user, data_type='PHOTO', time=datetime.datetime.today()).save()
+            dform = form
+        else:
+            print "invalid form"
+            dform = FBPhotoCreateForm()
+    else:
+        dform = FBPhotoCreateForm(user=user)
+    response = render_to_response(template, locals(), context_instance=RequestContext(request,{'form':dform})
+        )
+    return response
+
+def add_fb_event(request, template='add_fb_event.html'):
+    if request.method == 'POST':
+        form = FBEventCreateForm(request.POST)
+        if form.is_valid():
+            service_user = getFacebookProfile(request=request)
+            currentuser = User.objects.get(username=request.user.username)
+            idr = 'event:%s@facebook/events#DUMMY' % service_user.userid
+            data = form.cleaned_data
+            try:
+                fbprofile=FacebookData.objects.get(data_type='PROFILE', neemi_user=currentuser.id,idr = 'profile:%s@facebook'%(service_user.userid))
+                me = fbprofile.data['name']
+            except FacebookData.DoesNotExist:
+                me = "me"
+            if data['owner'] != "Me":
+                owner = data['owner']
+            else:
+                owner = me
+            startTime = data['startTime'].strftime("%Y-%m-%dT%H:%M:%S+0000")
+            endTime = data['endTime'].strftime("%Y-%m-%dT%H:%M:%S+0000")
+            rsvpStatus = data['rsvpStatus']
+            name = data['eventName']
+            description = data['description']
+            location_fields = ("name", "street", "zip", "city", "state", "country", "latitude", "longitude")
+            location = dict((i, None) for i in location_fields )
+            for field in location_fields:
+                if data[field]:
+                    location[field]=data[field]
+            place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
+            eventdata=dict([('owner', owner), ('start_time', startTime), ('end_time', endTime), ('rsvp_status',rsvpStatus),('id', "DUMMY"), ('name', name), ('description', description), ('place', place)])
+            newevent = FacebookData(idr=idr, data = eventdata, neemi_user = currentuser, facebook_user = service_user, data_type='EVENT', time=datetime.datetime.today()).save()
+            dform = form
+        else:
+            print "invalid form"
+            dform = FBEventCreateForm()
+    else:
+        dform = FBEventCreateForm()
+    response = render_to_response(template, locals(), context_instance=RequestContext(request,{'form':dform})
         )
     return response
 
