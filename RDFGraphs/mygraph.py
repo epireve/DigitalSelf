@@ -12,6 +12,8 @@ my = rdflib.namespace.Namespace('custom/')
 
 tmp = os.path.join(os.path.dirname(__file__), 'tmp')
 
+common_types = [ schema.Text, schema.Date ]
+
 
 class MyGraph(rdflib.Graph):
     def __init__(self, *args, **kwargs):
@@ -130,6 +132,54 @@ class MyGraph(rdflib.Graph):
     #     schema.recordedAt(my.Event) with its label?
     #     schema.description(schema.Text): name(caption)
     #     my.?(?): backdated_time_granularity
+    #     my.dateCreatedGranularity(my.Granularity)
+
+
+
+    # schema.attendee(schema.Person)
+    # schema.endDate(schema.Date)
+    # schema.location(schema.Place)
+    # schema.organizer(schema.Person)
+    # schema.recordedIn(schema.CreativeWork>my.Photograph)
+    # schema.startDate(schema.Date)
+    # schema.description(schema.Text)
+    # schema.name(schema.Text)
+    # schema.duration(schema.Duration)?
+    # my.startBefore(schema.Date)
+    # my.endAfter(schema.Date)
+
+
+
+    def add_person(self, name):
+        namelit = rdflib.Literal(name)
+        if (None, schema.name, namelit) in self:
+            return self.value(predicate=schema.name, object=namelit)
+        bn = self.bnode(label=name)
+        self.add((bn, RDF.type, schema.Person))
+        self.add((bn, schema.name, namelit))
+        return bn
+
+    # update graph representing an event using graph gph representing a photograph
+    def absorb_photograph(self, gph):
+        event = self.mainnode
+        photo = gph.mainode
+        assert (event, RDF.type, my.Event) in self
+        assert (photo, RDF.type, my.Photograph) in gph
+        self.add((photo, RDF.type, my.Photograph))
+        self.add((event, schema.recordedIn, photo))
+        # Persons
+        for person in gph.objects(photo, schema.publisher):
+            if (person, RDF.type, schema.Person) in gph:
+                pnode = self.add_person(gph.value(subject=person, predicate=schema.name))
+                self.add((event, schema.attendee, pnode))
+        for person in gph.objects(photo, schema.about):
+            if (person, RDF.type, schema.Person) in gph:
+                pnode = self.add_person(gph.value(subject=person, predicate=schema.name))
+                self.add((event, schema.attendee, pnode))
+        # TODO
+
+
+# We suppose that the publisher was at the event
 
 
     # schema.attendee(schema.Person)
@@ -152,7 +202,14 @@ class MyGraph(rdflib.Graph):
             self.add(my.Photograph, RDFS.subClassOf, schema.Photograph)
 
 
-    def draw(self, name='default'):
+    def draw(self, name='default', lighten_types=False):
+        if lighten_types:
+            g = MyGraph()
+            g += self
+            for t in common_types:
+                g.remove((None, RDF.type, t))
+            g.draw(name=name)
+            return
         path_dot = os.path.join(tmp, name+'_dot')
         with io.open(path_dot, mode='w', newline='') as f:
             rdflib.tools.rdf2dot.rdf2dot(self, f)
