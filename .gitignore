@@ -5,3 +5,6 @@ statistic.txt
 my_settings.py
 .idea
 webapp/keys.py
+
+RDFGraphs/tmp
+!RDFGraphs/project_statement_example.n3

@@ -35,13 +35,16 @@ def simple_keyword_search(request,keyword,service=None):
                 if 'backdated_time' in item.data:
                     print "Backdated time :%s" %item.data['backdated_time']
                     #TESTING
-                    g = MyGraph()
-                    g.parse_photo(item)
-                    print(g.serialize(format='n3'))
-                    g.draw(name="truc")
+                    p = MyGraph()
+                    p.parse_photo(item)
+                    #print(p.serialize(format='n3'))
+                    p.draw(name="search_photo")
                 related = related_to_fb_photo(request, item)
                 print "Found %s related items" % len(related)
             elif item.data_type=='EVENT':
+                e = MyGraph()
+                e.parse_event(item)
+                e.draw(name='search_event')
                 print "Found an event"
             elif item.data_type=='FRIEND':
                 print "Found friends"
@@ -52,6 +55,8 @@ def simple_keyword_search(request,keyword,service=None):
             #print item._data['time']
             #if item._data.has_field('message'):
             #    print item.message
+        e.absorb_photograph(p)
+        e.draw('merge')
         results = facebook_items
     elif service=='gcal':
         gcal_items = GcalData.objects(neemi_user=currentuser.id)

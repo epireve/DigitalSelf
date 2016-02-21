@@ -44,6 +44,7 @@ class MyGraph(rdflib.Graph):
         assert type in unique_types
         id_prop = unique_types[type]
         if (None, id_prop, id) in self:
+            print('bnode_find found existing node', id)
             return self.value(predicate=id_prop, object=id)
         return self.bnode(label=label)
 
@@ -111,6 +112,13 @@ class MyGraph(rdflib.Graph):
             self.add((place, schema.geo, geo))
 
 
+    def add_person(self, strname):
+        name = Literal(strname)
+        self.add((name, RDF.type, schema.Text))
+        bn = self.bnode_find(schema.Person, name, label=strname)
+        self.add((bn, RDF.type, schema.Person))
+        self.add((bn, schema.name, name))
+        return bn
 
     def parse_photo(self, photo):
         """
@@ -137,11 +145,7 @@ class MyGraph(rdflib.Graph):
             self.add((main, my.dateCreatedGranularity, granularity))
         if 'tags' in data:
             for tag in data['tags']['data']:
-                bn = self.bnode(label=unidecode(tag['name']))
-                self.add((bn, RDF.type, schema.Person))
-                name=Literal(unidecode(tag['name']))
-                self.add((name, RDF.type, schema.Text))
-                self.add((bn, schema.name, name))
+                bn = self.add_person(unidecode(tag['name']))
                 self.add((main, schema.about, bn))
         if 'created_time' in data:
             createdTime = Literal(data['created_time'])
@@ -162,12 +166,8 @@ class MyGraph(rdflib.Graph):
             self.add((main, schema.contentLocation, place))
             self.enrich_place_with_fb_data(place, FBLocation)
         if 'from' in data:
-            name = Literal(unidecode(data['from']['name']))
-            self.add((name, RDF.type, schema.Text))
-            uploader = self.bnode(label=unidecode(data['from']['name']))
+            uploader = self.add_person(unidecode(data['from']['name']))
             self.add((main, schema.publisher, uploader))
-            self.add((uploader, schema.name, name))
-            self.add((uploader, RDF.type, schema.Person))
         #if 'event' in data:
             #parse event ?
             #event node with id ?
@@ -208,19 +208,11 @@ class MyGraph(rdflib.Graph):
         self.add((idr, RDF.type, schema.Text))
         self.add((main, my.idr, idr))
         if 'owner' in data:
-            name = Literal(unidecode(data['owner']['name']))
-            self.add((name, RDF.type, schema.Text))
-            owner = self.bnode(label=unidecode(data['owner']['name']))
-            self.add((owner, schema.name, name))
-            self.add((owner, RDF.type, schema.Person))
+            owner = self.add_person(unidecode(data['owner']['name']))
             self.add((main, schema.organizer, owner))
         if 'attending' in data:
             for guest in data['attending']['data']:
-                bn = self.bnode(label=unidecode(guest['name']))
-                self.add((bn, RDF.type, schema.Person))
-                name=Literal(unidecode(guest['name']))
-                self.add((name, RDF.type, schema.Text))
-                self.add((bn, schema.name, name))
+                bn = self.add_person(unidecode(guest['name']))
                 self.add((main, schema.attendee, bn))
         if 'start_time' in data:
             startTime = Literal(data['start_time'])
@@ -343,10 +335,14 @@ class MyGraph(rdflib.Graph):
         path_png = os.path.join(tmp, name+'.png')
         subprocess.call(["dot", "-Tpng", path_dot, "-o", path_png])
 
+    def save(self, name="default"):
+        path = os.path.join(tmp, name+'.n3')
+        self.serialize(path, 'n3')
+
 
 if __name__ == '__main__':
-    # g = MyGraph()
-    #g.parse(tmp+'/project_statement_example.n3', format='n3')
+    g = MyGraph()
+    g.parse(tmp+'/project_statement_example.n3', format='n3')
     #print(g.serialize(format='n3'))
     #g.draw('project_statement_example')
     pass
