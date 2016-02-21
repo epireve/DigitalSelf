@@ -15,7 +15,7 @@ urlpatterns = patterns('webapp.views',
     url(r'^delete/$', 'delete', name='delete'),
     url(r'^error/$', 'error', name='error'),
     url(r'^get_stats/$', 'get_stats', name='get_stats'),
-    url(r'^photo/$', 'photo', name='photo'),
+    url(r'^contextualize/$', 'contextualize', name='contextualize'),
     url(r'^add_fb_photo/$', 'add_fb_photo', name='add_fb_photo'),
     url(r'^add_fb_event/$', 'add_fb_event', name='add_fb_event')
 

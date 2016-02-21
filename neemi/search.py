@@ -7,7 +7,7 @@ from mongoengine.django.auth import User
 from mongoengine.connection import get_db
 
 from pymongo import MongoClient
-
+from RDFGraphs.mygraph import MyGraph
 from models import *
 from django.utils.dateparse import parse_datetime
 import datetime
@@ -34,6 +34,10 @@ def simple_keyword_search(request,keyword,service=None):
                 print item.data['created_time']
                 if 'backdated_time' in item.data:
                     print "Backdated time :%s" %item.data['backdated_time']
+                    #TESTING
+                    g = MyGraph()
+                    g.parse_photo(item)
+                    g.draw(name="truc")
                 related = related_to_fb_photo(request, item)
                 print "Found %s related items" % len(related)
             elif item.data_type=='EVENT':

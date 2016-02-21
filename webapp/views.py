@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
-from forms import GetDataForm, KeywordSearchForm, REGISTER_CHOICES, PhotoSelectionForm, FBPhotoCreateForm, FBEventCreateForm
+from forms import GetDataForm, KeywordSearchForm, REGISTER_CHOICES, DocumentSelectionForm, FBPhotoCreateForm, FBEventCreateForm
 from neemi.data import get_user_data, get_all_user_data, getFacebookProfile
 from neemi.search import simple_keyword_search
 from neemi.stats import *
@@ -45,18 +45,18 @@ def search(request, template='search.html'):
         )
     return response
 
-def photo(request, template='photo.html'):
+def contextualize(request, template='contextualize.html'):
     user = request.user
     if request.method == 'POST':
-        form = PhotoSelectionForm(request.POST, user=user)
+        form = DocumentSelectionForm(request.POST, user=user)
         if form.is_valid():
             print "GOOD DATA"
             dform = form
         else:
             print "invalid form"
-            dform = PhotoSelectionForm()
+            dform = DocumentSelectionForm()
     else:
-        dform = PhotoSelectionForm(user=user)
+        dform = DocumentSelectionForm(user=user)
     response = render_to_response(
         template, locals(), context_instance=RequestContext(request,{'form':dform})
         )
@@ -105,12 +105,17 @@ def add_fb_photo(request, template='add_fb_photo.html'):
             if data['event']:
                 event = dict([('data', data['event']['data'])])
             location_fields = ("name", "street", "zip", "city", "state", "country", "latitude", "longitude")
-            location = dict((i, None) for i in location_fields )
+            location = dict()
             for field in location_fields:
                 if data[field]:
                     location[field]=data[field]
-            place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
-            photodata = dict([('backdated_time', backdated_time), ('backdated_time_granularity', granularity), ('created_time', created_time), ('from', from_dict),('id', ("DUMMY" + photoId)), ('place', place),('tags', tags), ('name', caption)])
+            if location["name"]:
+                place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
+            else:
+                place = dict([('id', "DUMMY"), ('location', location)])
+            photodata = dict([('backdated_time', backdated_time), ('backdated_time_granularity', granularity), ('created_time', created_time), ('from', from_dict),('id', ("DUMMY" + photoId)),('tags', tags), ('name', caption)])
+            if location:
+                photodata['place']=place
             newphoto = FacebookData(idr=idr, data=photodata, neemi_user=currentuser, facebook_user=service_user, data_type='PHOTO', time=datetime.datetime.today()).save()
             dform = form
         else:
@@ -158,12 +163,17 @@ def add_fb_event(request, template='add_fb_event.html'):
             name = data['eventName']
             description = data['description']
             location_fields = ("name", "street", "zip", "city", "state", "country", "latitude", "longitude")
-            location = dict((i, None) for i in location_fields )
+            location = dict()
             for field in location_fields:
                 if data[field]:
                     location[field]=data[field]
-            place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
-            eventdata=dict([('attending', attending),('owner', owner), ('start_time', startTime), ('end_time', endTime), ('rsvp_status',rsvpStatus),('id', ("DUMMY" + eventId)), ('name', name), ('description', description), ('place', place)])
+            if location["name"]:
+                place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
+            else:
+                place = dict([('id', "DUMMY"), ('location', location)])
+            eventdata=dict([('attending', attending),('owner', owner), ('start_time', startTime), ('end_time', endTime), ('rsvp_status',rsvpStatus),('id', ("DUMMY" + eventId)), ('name', name), ('description', description)])
+            if location:
+                eventdata['place']=place
             newevent = FacebookData(idr=idr, data = eventdata, neemi_user = currentuser, facebook_user = service_user, data_type='EVENT', time=datetime.datetime.today()).save()
             dform = form
         else:
