@@ -6,7 +6,9 @@ import rdflib
 from rdflib import RDF, RDFS, Literal
 import rdflib.tools.rdf2dot
 from unidecode import unidecode
-
+from geopy.geocoders.googlev3 import GoogleV3
+from my_settings import GEOCODING_ID
+import string
 schema = rdflib.namespace.Namespace('http://schema.org/')
 my = rdflib.namespace.Namespace('custom/')
 
@@ -21,6 +23,7 @@ class MyGraph(rdflib.Graph):
         self.bind("schema", schema)
         self.bind("my", my)
         self.mainnode = None
+        self.geocoder = None
 
     def bnode(self, label=None):
         bn = rdflib.BNode()
@@ -32,11 +35,12 @@ class MyGraph(rdflib.Graph):
 
     def enrich_place_with_fb_data(self, place, fblocation):
         address_components = ["street", "zip", "city", "state", "country"]
+        if 'name' in fblocation:
+            placeName=unidecode(fblocation['name'])
+        else:
+            placeName="Location"
         if len(set(fblocation.keys()) & set(address_components)):
-            if 'name' in fblocation:
-                address=self.bnode(label=fblocation['name'])
-            else:
-                address=self.bnode(label="Location")
+            address=self.bnode(label=Literal(placeName))
             self.add((address, RDF.type, schema.PostalAddress))
             self.add((place, schema.address, address))
             if 'street' in fblocation:
@@ -59,16 +63,38 @@ class MyGraph(rdflib.Graph):
                 country = Literal(fblocation['country'])
                 self.add((country, RDF.type, schema.Text))
                 self.add((address, schema.addressCountry, country))
+        geo = self.bnode(label="g")
+        self.add((geo, RDF.type, schema.GeoCoordinates))
         if 'latitude' in fblocation and 'longitude' in fblocation:
-            geo = self.bnode(label="g")
-            self.add((geo, RDF.type, schema.GeoCoordinates))
-            self.add((place, schema.geo, geo))
             lat = Literal(fblocation['latitude'])
             lon = Literal(fblocation['longitude'])
             self.add((lat, RDF.type, schema.Number))
             self.add((lon, RDF.type, schema.Number))
             self.add((geo, schema.latitude, lat))
             self.add((geo, schema.longitude, lon))
+            self.add((place, schema.geo, geo))
+            if 'street' not in fblocation:
+                #reverse geocode
+                if self.geocoder is None:
+                    self.geocoder=GoogleV3(api_key=GEOCODING_ID)
+                geoloc=self.geocoder.reverse((lat, lon),exactly_one=True)
+                address = Literal(unidecode(geoloc.address))
+                fullAddress = self.bnode(label=Literal("Full address"))
+                self.add((fullAddress, RDF.type, schema.Text))
+                self.add((place, schema.address, fullAddress))
+        elif 'street' in fblocation:
+            if self.geocoder is None:
+                self.geocoder=GoogleV3(api_key=GEOCODING_ID)
+            query = ''.join((fblocation[i] for i in address_components if i in fblocation))
+            geoloc = self.geocoder.geocode(query)
+            lat = Literal(geoloc.latitude)
+            lon = Literal(geoloc.longitude)
+            self.add((lat, RDF.type, schema.Number))
+            self.add((lon, RDF.type, schema.Number))
+            self.add((geo, schema.latitude, lat))
+            self.add((geo, schema.longitude, lon))
+            self.add((place, schema.geo, geo))
+
 
     def parse_photo(self, photo):
         """
