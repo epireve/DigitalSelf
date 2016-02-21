@@ -48,6 +48,10 @@ def simple_keyword_search(request,keyword,service=None):
             #if item._data.has_field('message'):
             #    print item.message
         results = facebook_items
+    elif service=='gcal':
+        gcal_items = GcalData.objects(neemi_user=currentuser.id)
+        for item in gcal_items:
+            print '----'
     else:
         results = None
     return HttpResponseRedirect(url)

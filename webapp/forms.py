@@ -4,6 +4,7 @@ from django.forms.formsets import formset_factory
 from django.contrib.admin import widgets
 from django.forms.extras.widgets import SelectDateWidget
 from django.forms.widgets import Select
+from django.core.validators import RegexValidator
 from neemi.models import *
 from mongoengine.django.auth import User
 from widgets import SplitSelectDateTimeWidget
@@ -60,6 +61,7 @@ class FBPhotoCreateForm(forms.Form):
     backdatedDateTimeGranularity = forms.ChoiceField(label="Granularity", choices=((i,i) for i in ("day", "hour", "minute", "second")),initial="hour")
     createdDateTime = forms.DateTimeField(label="Photo uploaded on (optional)", widget=SplitSelectDateTimeWidget(years=range(2016,2000,-1)))
     caption = forms.CharField(label="Caption", initial="Default caption")
+    photoId = forms.CharField(label="Mock Facebook ID (optional)", max_length=10, validators=[RegexValidator(r'^\d{1,10}$')],required=False)
     uploadedBy = forms.CharField(label="Uploaded by", initial="Me", required=False)
     tags = forms.CharField(label="Tagged users (comma separated)", required=False)
     name = forms.CharField(label="Location name", required=False)
@@ -89,6 +91,8 @@ class FBEventCreateForm(forms.Form):
     description = forms.CharField(label="Description", required=False)
     startTime = forms.DateTimeField(label="Start time", widget=SplitSelectDateTimeWidget(years=range(2016,2000,-1)))
     endTime = forms.DateTimeField(label="End time", widget=SplitSelectDateTimeWidget(years=range(2016,2000,-1)))
+    eventId = forms.CharField(label="Mock Facebook ID (optional)", max_length=10, validators=[RegexValidator(r'^\d{1,10}$')],required=False)
+    attending = forms.CharField(label="People attending (comma-separated)", required = False)
     name = forms.CharField(label="Location name", required=False)
     street = forms.CharField(label="Street adress", required=False)
     zip = forms.CharField(label="Zip code", required=False)

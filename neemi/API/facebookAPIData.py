@@ -249,7 +249,7 @@ def get_inbox(fromtimestamp, totimestamp, access_token):
 
 
 def get_events(fromtimestamp, totimestamp, access_token):
-    fields = 'description,id,end_time,place,name,owner,rsvp_status,start_time'
+    fields = 'description,id,end_time,place,name,owner,rsvp_status,start_time,attending'
     url = 'https://graph.facebook.com/me/events?limit=1000&access_token=%s'%access_token
     #if fromtimestamp is not None:
     #    url += '&since=%s'%fromtimestamp

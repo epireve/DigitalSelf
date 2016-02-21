@@ -6,7 +6,7 @@ from neemi.data import get_user_data, get_all_user_data, getFacebookProfile
 from neemi.search import simple_keyword_search
 from neemi.stats import *
 from neemi.models import *
-import time, datetime
+import time, datetime, random, string
 from mongoengine.base import BaseDict
 
 def index(request, template='index.html'):
@@ -69,8 +69,12 @@ def add_fb_photo(request, template='add_fb_photo.html'):
         if form.is_valid():
             service_user = getFacebookProfile(request=request)
             currentuser = User.objects.get(username=request.user.username)
-            idr = 'photo:%s@facebook/photos#DUMMY' % service_user.userid
             data = form.cleaned_data
+            if data['photoId']:
+                photoId = data['photoId']
+            else:
+                photoId = ''.join(random.choice(string.digits) for _ in range(10))
+            idr = 'photo:%s@facebook/photos#DUMMY%s' % (service_user.userid, photoId)
             backdated_time = data['backdatedDateTime'].strftime("%Y-%m-%dT%H:%M:%S+0000")
             granularity = data['backdatedDateTimeGranularity']
             if data['createdDateTime']:
@@ -91,7 +95,10 @@ def add_fb_photo(request, template='add_fb_photo.html'):
             tagsdata = []
             if data['tags']:
                 for tag in data['tags'].split(','):
-                    tagdict = dict([('id', "DUMMY") ,('name', tag)])
+                    if tag=="Me":
+                        tagdict = dict([('id', "DUMMY"),('name', me)])
+                    else:
+                        tagdict = dict([('id', "DUMMY") ,('name', tag)])
                     tagsdata.append(tagdict)
             tags=dict([('data', tagsdata)])
             event=None
@@ -103,7 +110,7 @@ def add_fb_photo(request, template='add_fb_photo.html'):
                 if data[field]:
                     location[field]=data[field]
             place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
-            photodata = dict([('backdated_time', backdated_time), ('backdated_time_granularity', granularity), ('created_time', created_time), ('from', from_dict),('id', "DUMMY"), ('place', place),('tags', tags), ('name', caption)])
+            photodata = dict([('backdated_time', backdated_time), ('backdated_time_granularity', granularity), ('created_time', created_time), ('from', from_dict),('id', ("DUMMY" + photoId)), ('place', place),('tags', tags), ('name', caption)])
             newphoto = FacebookData(idr=idr, data=photodata, neemi_user=currentuser, facebook_user=service_user, data_type='PHOTO', time=datetime.datetime.today()).save()
             dform = form
         else:
@@ -121,8 +128,12 @@ def add_fb_event(request, template='add_fb_event.html'):
         if form.is_valid():
             service_user = getFacebookProfile(request=request)
             currentuser = User.objects.get(username=request.user.username)
-            idr = 'event:%s@facebook/events#DUMMY' % service_user.userid
             data = form.cleaned_data
+            if data['eventId']:
+                eventId = data['eventId']
+            else:
+                eventId = ''.join(random.choice(string.digits) for _ in range(10))
+            idr = 'event:%s@facebook/events#DUMMY%s' % (service_user.userid, eventId)
             try:
                 fbprofile=FacebookData.objects.get(data_type='PROFILE', neemi_user=currentuser.id,idr = 'profile:%s@facebook'%(service_user.userid))
                 me = fbprofile.data['name']
@@ -132,6 +143,15 @@ def add_fb_event(request, template='add_fb_event.html'):
                 owner = data['owner']
             else:
                 owner = me
+            attendingdata = []
+            if data['attending']:
+                for guest in data['attending'].split(','):
+                    if guest=="Me":
+                        guestdict = dict([('id', "DUMMY"),('name', me)])
+                    else:
+                        guestdict = dict([('id', "DUMMY") ,('name', guest)])
+                    attendingdata.append(guestdict)
+            attending=dict([('data', attendingdata)])
             startTime = data['startTime'].strftime("%Y-%m-%dT%H:%M:%S+0000")
             endTime = data['endTime'].strftime("%Y-%m-%dT%H:%M:%S+0000")
             rsvpStatus = data['rsvpStatus']
@@ -143,7 +163,7 @@ def add_fb_event(request, template='add_fb_event.html'):
                 if data[field]:
                     location[field]=data[field]
             place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
-            eventdata=dict([('owner', owner), ('start_time', startTime), ('end_time', endTime), ('rsvp_status',rsvpStatus),('id', "DUMMY"), ('name', name), ('description', description), ('place', place)])
+            eventdata=dict([('attending', attending),('owner', owner), ('start_time', startTime), ('end_time', endTime), ('rsvp_status',rsvpStatus),('id', ("DUMMY" + eventId)), ('name', name), ('description', description), ('place', place)])
             newevent = FacebookData(idr=idr, data = eventdata, neemi_user = currentuser, facebook_user = service_user, data_type='EVENT', time=datetime.datetime.today()).save()
             dform = form
         else:
