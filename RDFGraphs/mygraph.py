@@ -3,16 +3,25 @@ import os
 import subprocess
 
 import rdflib
-from rdflib import RDF, RDFS, Literal
+from rdflib import RDF, RDFS, BNode, Literal
 import rdflib.tools.rdf2dot
 from unidecode import unidecode
 from geopy.geocoders.googlev3 import GoogleV3
 from my_settings import GEOCODING_ID
 import string
+from django.utils.dateparse import parse_datetime
+
 schema = rdflib.namespace.Namespace('http://schema.org/')
-my = rdflib.namespace.Namespace('custom/')
+#my = rdflib.namespace.Namespace('custom/')
+my = rdflib.namespace.Namespace('http://example.org/')
 
 tmp = os.path.join(os.path.dirname(__file__), 'tmp')
+
+
+unique_types = {
+    schema.Person: schema.name,
+    my.Photograph: my.idr,
+}
 
 common_types = [ schema.Text, schema.Date ]
 
@@ -26,11 +35,17 @@ class MyGraph(rdflib.Graph):
         self.geocoder = None
 
     def bnode(self, label=None):
-        bn = rdflib.BNode()
+        bn = BNode()
         if label is not None:
             self.add((bn, RDFS.label, Literal(label)))
         return bn
 
+    def bnode_find(self, type, id, label=None):
+        assert type in unique_types
+        id_prop = unique_types[type]
+        if (None, id_prop, id) in self:
+            return self.value(predicate=id_prop, object=id)
+        return self.bnode(label=label)
 
 
     def enrich_place_with_fb_data(self, place, fblocation):
@@ -94,6 +109,7 @@ class MyGraph(rdflib.Graph):
             self.add((geo, schema.latitude, lat))
             self.add((geo, schema.longitude, lon))
             self.add((place, schema.geo, geo))
+
 
 
     def parse_photo(self, photo):
@@ -248,33 +264,59 @@ class MyGraph(rdflib.Graph):
 
 
 
-    def add_person(self, name):
-        namelit = rdflib.Literal(name)
-        if (None, schema.name, namelit) in self:
-            return self.value(predicate=schema.name, object=namelit)
-        bn = self.bnode(label=name)
-        self.add((bn, RDF.type, schema.Person))
-        self.add((bn, schema.name, namelit))
-        return bn
+
+
+    def create_or_find_absorbed_node(self, g, n):
+        if not isinstance(n, BNode):
+            return n
+        type = g.value(subject=n, predicate=RDF.type)
+        if type in unique_types:
+            id_prop = unique_types[type]
+            id = g.value(subject=n, predicate=id_prop)
+            #if (None, id_prop, id) in self:
+            #    return self.value(predicate=id_prop, object=id)
+            for subj in self.subjects(id_prop, id):
+                if (subj, RDF.type, type) in self:
+                    return subj
+        return self.bnode()
+
+    def absorb_node(self, g, subj):
+        type = g.value(subject=subj, predicate=RDF.type)
+        if type is schema.Place:
+            pass #TODO
+        nsubj = self.create_or_find_absorbed_node(g, subj)
+        for (pred, obj) in g.predicate_objects(subj):
+            nobj = self.absorb_node(g, obj)
+            self.add((nsubj, pred, nobj))
+            if ((pred == schema.publisher or pred == schema.about)
+                    and (obj, RDF.type, schema.Person) in g
+                    and (self.mainnode, RDF.type, my.Event) in self):
+                self.add((self.mainnode, schema.attendee, nobj))
+        return nsubj
+
+
+
+    def relevantDate(self, datetime):
+        #TODO
+        return True
+
+    def recordedIn(self, gph):
+        #TODO
+        return True
+
 
     # update graph representing an event using graph gph representing a photograph
     def absorb_photograph(self, gph):
         event = self.mainnode
-        photo = gph.mainode
+        photo = gph.mainnode
         assert (event, RDF.type, my.Event) in self
         assert (photo, RDF.type, my.Photograph) in gph
-        self.add((photo, RDF.type, my.Photograph))
-        self.add((event, schema.recordedIn, photo))
-        # Persons
-        for person in gph.objects(photo, schema.publisher):
-            if (person, RDF.type, schema.Person) in gph:
-                pnode = self.add_person(gph.value(subject=person, predicate=schema.name))
-                self.add((event, schema.attendee, pnode))
-        for person in gph.objects(photo, schema.about):
-            if (person, RDF.type, schema.Person) in gph:
-                pnode = self.add_person(gph.value(subject=person, predicate=schema.name))
-                self.add((event, schema.attendee, pnode))
-        # TODO
+        if not self.recordedIn(gph):
+            return
+        nphoto = self.absorb_node(gph, photo)
+        self.add((event, schema.recordedIn, nphoto))
+        self.add((nphoto, schema.recordedAt, event))
+
 
 
 # We suppose that the publisher was at the event
@@ -282,9 +324,9 @@ class MyGraph(rdflib.Graph):
 
     def elaborate_my_types(self):
         if (None, None, my.Event) in self:
-            self.add(my.Event, RDFS.subClassOf, schema.Event)
+            self.add((my.Event, RDFS.subClassOf, schema.Event))
         if (None, None, my.Photograph) in self:
-            self.add(my.Photograph, RDFS.subClassOf, schema.Photograph)
+            self.add((my.Photograph, RDFS.subClassOf, schema.Photograph))
 
 
     def draw(self, name='default', lighten_types=False):
@@ -299,12 +341,12 @@ class MyGraph(rdflib.Graph):
         with io.open(path_dot, mode='w', newline='') as f:
             rdflib.tools.rdf2dot.rdf2dot(self, f)
         path_png = os.path.join(tmp, name+'.png')
-        subprocess.call(["dot", "-Tpng", path_dot, "-o", path_png], shell=True)
+        subprocess.call(["dot", "-Tpng", path_dot, "-o", path_png])
 
 
 if __name__ == '__main__':
-    g = MyGraph()
-    g.parse(tmp+'/project_statement_example.n3', format='n3')
+    # g = MyGraph()
+    #g.parse(tmp+'/project_statement_example.n3', format='n3')
     #print(g.serialize(format='n3'))
-    g.draw('project_statement_example')
-
+    #g.draw('project_statement_example')
+    pass
