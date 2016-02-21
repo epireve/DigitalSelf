@@ -1,0 +1,31 @@
+@prefix my: <custom/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+my:Meeting rdfs:subClassOf schema:Event .
+
+[] a my:Meeting ;
+    rdfs:label "MPRIMeeting" ;
+    schema:attendee _:N101a70d019204512a434dff853240381,
+        [ a schema:Person ;
+            rdfs:label "BobPearl" ;
+            schema:colleague _:N101a70d019204512a434dff853240381 ;
+            schema:familyName "Pearl" ;
+            schema:givenName "Bob" ;
+            schema:name "Bob Pearl" ] ;
+    schema:endDate "2014-11-25T11:00:00+1:00" ;
+    schema:location [ a schema:Place ;
+            rdfs:label "TelecomParis" ;
+            schema:geo [ rdfs:label "g" ;
+                    schema:latitude 4.88264e+01 ;
+                    schema:longitude 2.3464e+00 ] ;
+            schema:name "Telecom Paris" ] ;
+    schema:startDate "2014-11-25T10:00:00+1:00" .
+
+_:N101a70d019204512a434dff853240381 a schema:Person ;
+    rdfs:label "AliceWonders" ;
+    schema:name "Alice Wonders" .
+
