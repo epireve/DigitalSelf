@@ -37,6 +37,7 @@ def simple_keyword_search(request,keyword,service=None):
                     #TESTING
                     g = MyGraph()
                     g.parse_photo(item)
+                    print(g.serialize(format='n3'))
                     g.draw(name="truc")
                 related = related_to_fb_photo(request, item)
                 print "Found %s related items" % len(related)

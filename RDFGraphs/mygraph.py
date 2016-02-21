@@ -20,6 +20,7 @@ class MyGraph(rdflib.Graph):
         rdflib.Graph.__init__(self, *args, **kwargs)
         self.bind("schema", schema)
         self.bind("my", my)
+        self.mainnode = None
 
     def bnode(self, label=None):
         bn = rdflib.BNode()
@@ -27,14 +28,63 @@ class MyGraph(rdflib.Graph):
             self.add((bn, RDFS.label, Literal(label)))
         return bn
 
+
+
+    def enrich_place_with_fb_data(self, place, fblocation):
+        address_components = ["street", "zip", "city", "state", "country"]
+        if len(set(fblocation.keys()) & set(address_components)):
+            if 'name' in fblocation:
+                address=self.bnode(label=fblocation['name'])
+            else:
+                address=self.bnode(label="Location")
+            self.add((address, RDF.type, schema.PostalAddress))
+            self.add((place, schema.address, address))
+            if 'street' in fblocation:
+                streetAddress = Literal(fblocation['street'])
+                self.add((streetAddress, RDF.type, schema.Text))
+                self.add((address, schema.streetAddress, streetAddress))
+            if 'zip' in fblocation:
+                zip = Literal(fblocation['zip'])
+                self.add((zip, RDF.type, schema.Text))
+                self.add((address, schema.postalCode, zip))
+            if 'city' in fblocation:
+                city = Literal(fblocation['city'])
+                self.add((city, RDF.type, schema.Text))
+                self.add((address, schema.addressLocality, city))
+            if 'state' in fblocation:
+                state = Literal(fblocation['state'])
+                self.add((state, RDF.type, schema.Text))
+                self.add((address, schema.addressRegion, state))
+            if 'country' in fblocation:
+                country = Literal(fblocation['country'])
+                self.add((country, RDF.type, schema.Text))
+                self.add((address, schema.addressCountry, country))
+        if 'latitude' in fblocation and 'longitude' in fblocation:
+            geo = self.bnode(label="g")
+            self.add((geo, RDF.type, schema.GeoCoordinates))
+            self.add((place, schema.geo, geo))
+            lat = Literal(fblocation['latitude'])
+            lon = Literal(fblocation['longitude'])
+            self.add((lat, RDF.type, schema.Number))
+            self.add((lon, RDF.type, schema.Number))
+            self.add((geo, schema.latitude, lat))
+            self.add((geo, schema.longitude, lon))
+
     def parse_photo(self, photo):
         """
         :param photo: a FacebookData instance with data_type "PHOTO"
         :type photo: :class:`neemi.models.FacebookData`
         """
-        main = self.bnode(label=photo.idr)
-        self.add((main, RDF.type, my.Photograph))
+
         data = photo.data
+        main = self.bnode(label=unidecode(photo.__unicode__()))
+        if self.mainnode is not None:
+            raise Exception("Graph already parsed something")
+        self.mainnode = main
+        self.add((main, RDF.type, my.Photograph))
+        idr = Literal(photo.idr)
+        self.add((idr, RDF.type, schema.Text))
+        self.add((main, my.idr, idr))
         if 'backdated_time' in data:
             date = Literal(data['backdated_time'])
             self.add((date, RDF.type, schema.Date))
@@ -68,47 +118,14 @@ class MyGraph(rdflib.Graph):
             place = self.bnode(label=placeLabel)
             self.add((place, RDF.type, schema.Place))
             self.add((main, schema.contentLocation, place))
-            address_components = ["street", "zip", "city", "state", "country"]
-            if len(set(FBLocation.keys()) & set(address_components)):
-                address=self.bnode(label=placeLabel)
-                self.add((address, RDF.type, schema.PostalAddress))
-                self.add((place, schema.address, address))
-                if 'street' in FBLocation:
-                    streetAddress = Literal(FBLocation['street'])
-                    self.add((streetAddress, RDF.type, schema.Text))
-                    self.add((address, schema.streetAddress, streetAddress))
-                if 'zip' in FBLocation:
-                    zip = Literal(FBLocation['zip'])
-                    self.add((zip, RDF.type, schema.Text))
-                    self.add((address, schema.postalCode, zip))
-                if 'city' in FBLocation:
-                    city = Literal(FBLocation['city'])
-                    self.add((city, RDF.type, schema.Text))
-                    self.add((address, schema.addressLocality, city))
-                if 'state' in FBLocation:
-                    state = Literal(FBLocation['state'])
-                    self.add((state, RDF.type, schema.Text))
-                    self.add((address, schema.addressRegion, state))
-                if 'country' in FBLocation:
-                    country = Literal(FBLocation['country'])
-                    self.add((country, RDF.type, schema.Text))
-                    self.add((address, schema.addressCountry, country))
-            if 'latitude' in FBLocation and 'longitude' in FBLocation:
-                geo = self.bnode(label="g")
-                self.add((geo, RDF.type, schema.GeoCoordinates))
-                self.add((place, schema.geo, geo))
-                lat = Literal(FBLocation['latitude'])
-                lon = Literal(FBLocation['longitude'])
-                self.add((lat, RDF.type, schema.Number))
-                self.add((lon, RDF.type, schema.Number))
-                self.add((geo, schema.latitude, lat))
-                self.add((geo, schema.longitude, lon))
+            self.enrich_place_with_fb_data(place, FBLocation)
         if 'from' in data:
             name = Literal(unidecode(data['from']['name']))
             self.add((name, RDF.type, schema.Text))
             uploader = self.bnode(label=unidecode(data['from']['name']))
             self.add((main, schema.publisher, uploader))
             self.add((uploader, schema.name, name))
+            self.add((uploader, RDF.type, schema.Person))
         #if 'event' in data:
             #parse event ?
             #event node with id ?
@@ -134,7 +151,62 @@ class MyGraph(rdflib.Graph):
     #     my.?(?): backdated_time_granularity
     #     my.dateCreatedGranularity(my.Granularity)
 
-
+    def parse_event(self, event):
+        """
+        :param event: FacebookData document that has data_type 'EVENT'
+        :type event: :class:`neemi.models.FacebookData`
+        """
+        data = event.data
+        main = self.bnode(label=unidecode(event.__unicode__()))
+        if self.mainnode is not None:
+            raise Exception("Graph already parsed something")
+        self.mainnode = main
+        self.add((main, RDF.type, my.Event))
+        idr = Literal(event.idr)
+        self.add((idr, RDF.type, schema.Text))
+        self.add((main, my.idr, idr))
+        if 'owner' in data:
+            name = Literal(unidecode(data['owner']['name']))
+            self.add((name, RDF.type, schema.Text))
+            owner = self.bnode(label=unidecode(data['owner']['name']))
+            self.add((owner, schema.name, name))
+            self.add((owner, RDF.type, schema.Person))
+            self.add((main, schema.organizer, owner))
+        if 'attending' in data:
+            for guest in data['attending']['data']:
+                bn = self.bnode(label=unidecode(guest['name']))
+                self.add((bn, RDF.type, schema.Person))
+                name=Literal(unidecode(guest['name']))
+                self.add((name, RDF.type, schema.Text))
+                self.add((bn, schema.name, name))
+                self.add((main, schema.attendee, bn))
+        if 'start_time' in data:
+            startTime = Literal(data['start_time'])
+            self.add((startTime, RDF.type, schema.Date))
+            self.add((main, schema.startDate, startTime))
+        if 'end_time' in data:
+            endTime = Literal(data['end_time'])
+            self.add((endTime, RDF.type, schema.Date))
+            self.add((main, schema.endDate, endTime))
+        if 'place' in data:
+            FBLocation = data['place']['location']
+            if FBLocation['name'] is not None:
+                placeLabel = FBLocation['name']
+            else:
+                placeLabel = "Event location"
+            place = self.bnode(label=placeLabel)
+            self.add((place, RDF.type, schema.Place))
+            self.add((main, schema.location, place))
+            self.enrich_place_with_fb_data(place, FBLocation)
+        #photos ?
+        if 'name' in data:
+            name = Literal(unidecode(data['name']))
+            self.add((name, RDF.type, schema.Text))
+            self.add((main, schema.name, name))
+        if 'description' in data:
+            description = Literal(unidecode(data['description']))
+            self.add((description, RDF.type, schema.Text))
+            self.add((main, schema.description, description))
 
     # schema.attendee(schema.Person)
     # schema.endDate(schema.Date)
@@ -144,7 +216,7 @@ class MyGraph(rdflib.Graph):
     # schema.startDate(schema.Date)
     # schema.description(schema.Text)
     # schema.name(schema.Text)
-    # schema.duration(schema.Duration)?
+
     # my.startBefore(schema.Date)
     # my.endAfter(schema.Date)
 
@@ -180,19 +252,6 @@ class MyGraph(rdflib.Graph):
 
 
 # We suppose that the publisher was at the event
-
-
-    # schema.attendee(schema.Person)
-    # schema.endDate(schema.Date)
-    # schema.location(schema.Place)
-    # schema.organizer(schema.Person)
-    # schema.recordedIn(schema.CreativeWork>my.Photograph)
-    # schema.startDate(schema.Date)
-    # schema.description(schema.Text)
-    # schema.name(schema.Text)
-    # schema.duration(schema.Duration)?
-    # my.startBefore(schema.Date)
-    # my.endAfter(schema.Date)
 
 
     def elaborate_my_types(self):
