@@ -8,6 +8,7 @@ from neemi.stats import *
 from neemi.models import *
 import time, datetime, random, string
 from mongoengine.base import BaseDict
+from RDFGraphs.mygraph import MyGraph
 
 def index(request, template='index.html'):
 
@@ -117,6 +118,13 @@ def add_fb_photo(request, template='add_fb_photo.html'):
             if location:
                 photodata['place']=place
             newphoto = FacebookData(idr=idr, data=photodata, neemi_user=currentuser, facebook_user=service_user, data_type='PHOTO', time=datetime.datetime.today()).save()
+
+            # #TESTING
+            # g = MyGraph()
+            # g.parse_photo(newphoto)
+            # print(g.serialize(format='n3'))
+            # g.draw(name="truc", lighten_types=True)
+
             dform = form
         else:
             print "invalid form"
@@ -145,9 +153,10 @@ def add_fb_event(request, template='add_fb_event.html'):
             except FacebookData.DoesNotExist:
                 me = "me"
             if data['owner'] != "Me":
-                owner = data['owner']
+                ownername = data['owner']
             else:
-                owner = me
+                ownername = me
+            owner = dict([('id', 'DUMMY'), ('name', ownername)])
             attendingdata = []
             if data['attending']:
                 for guest in data['attending'].split(','):
@@ -175,6 +184,13 @@ def add_fb_event(request, template='add_fb_event.html'):
             if location:
                 eventdata['place']=place
             newevent = FacebookData(idr=idr, data = eventdata, neemi_user = currentuser, facebook_user = service_user, data_type='EVENT', time=datetime.datetime.today()).save()
+
+            # #TESTING
+            # g = MyGraph()
+            # g.parse_event(newevent)
+            # print(g.serialize(format='n3'))
+            # g.draw(name="truc", lighten_types=True)
+
             dform = form
         else:
             print "invalid form"
