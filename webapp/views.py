@@ -6,6 +6,7 @@ from neemi.data import get_user_data, get_all_user_data, getFacebookProfile
 from neemi.search import simple_keyword_search
 from neemi.stats import *
 from neemi.models import *
+from django.utils.dateparse import parse_datetime
 import time, datetime, random, string
 from mongoengine.base import BaseDict
 from RDFGraphs.mygraph import MyGraph
@@ -51,7 +52,30 @@ def contextualize(request, template='contextualize.html'):
     if request.method == 'POST':
         form = DocumentSelectionForm(request.POST, user=user)
         if form.is_valid():
-            print "GOOD DATA"
+            currentuser = User.objects.get(username=request.user.username)
+            doc = form.cleaned_data['document'] #FacebookData
+            g = MyGraph()
+            #if doc.data_type == "PHOTO":
+            #    g.parse_photo(doc)
+            if doc.data_type == "EVENT":
+                g.parse_event(doc)
+            otherphotos=FacebookData.objects(neemi_user=currentuser.id, idr__ne=doc.idr, data_type='PHOTO')
+            otherevents=FacebookData.objects(neemi_user=currentuser.id, idr__ne=doc.idr, data_type='EVENT')
+            for photo in otherphotos:
+                if 'backdated_time' in photo.data:
+                    time = parse_datetime(photo.data['backdated_time'])
+                    if g.relevantDate(time):
+                        p=MyGraph()
+                        p.parse_photo(photo)
+                        g.absorb_photograph(p)
+            # for event in otherevents:
+            #     if 'start_time' in event.data:
+            #         time = parse_datetime(photo.data['backdated_time'])
+            #         if g.relevantDate(time):
+            #             e=MyGraph()
+            #             e.parse_event(event)
+            #             g.absorb_event(e)
+            g.draw(name=doc.data['id'], lighten_types=True)
             dform = form
         else:
             print "invalid form"
@@ -104,7 +128,7 @@ def add_fb_photo(request, template='add_fb_photo.html'):
             tags=dict([('data', tagsdata)])
             event=None
             if data['event']:
-                event = dict([('data', data['event']['data'])])
+                event = dict([('data', data['event']['data'])]) #doesn't work
             location_fields = ("name", "street", "zip", "city", "state", "country", "latitude", "longitude")
             location = dict()
             for field in location_fields:

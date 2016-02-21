@@ -52,14 +52,14 @@ class DocumentSelectionForm(forms.Form):
         super(DocumentSelectionForm, self).__init__(*args, **kwargs)
         if self.user:
             currentuser = User.objects.get(username=self.user.username)
-            self.fields['photo'] = forms.ModelChoiceField(label="Photo ID", queryset=FacebookData.objects(Q(neemi_user=currentuser.id) & (Q(data_type='PHOTO')|Q(data_type='EVENT'))))#, to_field_name='id')
+            self.fields['document'] = forms.ModelChoiceField(label="Document", queryset=FacebookData.objects(Q(neemi_user=currentuser.id) & (Q(data_type='PHOTO')|Q(data_type='EVENT'))))#, to_field_name='id')
 
 
 class FBPhotoCreateForm(forms.Form):
 
     backdatedDateTime = forms.DateTimeField(label="Photo taken on", widget=SplitSelectDateTimeWidget(years=range(2016,2000,-1)))
     backdatedDateTimeGranularity = forms.ChoiceField(label="Granularity", choices=((i,i) for i in ("day", "hour", "minute", "second")),initial="hour")
-    createdDateTime = forms.DateTimeField(label="Photo uploaded on (optional)", widget=SplitSelectDateTimeWidget(years=range(2016,2000,-1)))
+    createdDateTime = forms.DateTimeField(label="Photo uploaded on", widget=SplitSelectDateTimeWidget(years=range(2016,2000,-1)))
     caption = forms.CharField(label="Caption", initial="Default caption")
     photoId = forms.CharField(label="Mock Facebook ID (optional)", max_length=10, validators=[RegexValidator(r'^\d{1,10}$')],required=False)
     uploadedBy = forms.CharField(label="Uploaded by", initial="Me", required=False)

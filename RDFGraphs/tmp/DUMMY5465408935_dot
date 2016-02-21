@@ -1,0 +1,93 @@
+digraph { 
+ node [ fontname="DejaVu Sans" ] ; 
+	node2 -> node1 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:recordedAt</font> > ] ;
+	node0 -> node5 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:about</font> > ] ;
+	node6 -> node7 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node8 -> node9 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node1 -> node0 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:recordedIn</font> > ] ;
+	node12 -> node13 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node1 -> node14 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:location</font> > ] ;
+	node15 -> node3 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:address</font> > ] ;
+	node17 -> node18 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node1 -> node19 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node0 -> node20 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node2 -> node11 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:publisher</font> > ] ;
+	node21 -> node22 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node2 -> node5 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:about</font> > ] ;
+	node1 -> node2 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:recordedIn</font> > ] ;
+	node14 -> node23 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node5 -> node13 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node24 -> node18 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node1 -> node12 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:organizer</font> > ] ;
+	node15 -> node23 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node2 -> node15 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:contentLocation</font> > ] ;
+	node10 -> node7 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node0 -> node1 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:recordedAt</font> > ] ;
+	node25 -> node6 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:address</font> > ] ;
+	node1 -> node11 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:attendee</font> > ] ;
+	node15 -> node4 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:geo</font> > ] ;
+	node0 -> node25 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:contentLocation</font> > ] ;
+	node11 -> node13 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node3 -> node7 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node2 -> node20 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node14 -> node16 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:geo</font> > ] ;
+	node25 -> node23 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node1 -> node5 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:attendee</font> > ] ;
+	node16 -> node22 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node4 -> node22 [ color=BLACK, label=< <font point-size='10' color='#336633'>rdf:type</font> > ] ;
+	node25 -> node21 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:geo</font> > ] ;
+	node14 -> node10 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:address</font> > ] ;
+	node0 -> node11 [ color=BLACK, label=< <font point-size='10' color='#336633'>schema:publisher</font> > ] ;
+# Nb39bc1da38aa4076a2129ba698ef5751 node10
+node10 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>my place</B></td></tr><tr><td href='Nb39bc1da38aa4076a2129ba698ef5751' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>Nb39bc1da38aa4076a2129ba698ef5751</font></td></tr><tr><td align='left'>schema:addressCountry</td><td align='left'>&quot;France&quot;</td></tr><tr><td align='left'>schema:addressLocality</td><td align='left'>&quot;Paris&quot;</td></tr><tr><td align='left'>schema:addressRegion</td><td align='left'>&quot;75&quot;</td></tr><tr><td align='left'>schema:postalCode</td><td align='left'>&quot;75006&quot;</td></tr><tr><td align='left'>schema:streetAddress</td><td align='left'>&quot;22 rue du Regard&quot;</td></tr></table> > ] 
+# N2c866f2c74994b5e823094dfe11a3834 node14
+node14 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>my place</B></td></tr><tr><td href='N2c866f2c74994b5e823094dfe11a3834' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>N2c866f2c74994b5e823094dfe11a3834</font></td></tr></table> > ] 
+# 2.3267059 node24
+node24 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>2.3267059</B></td></tr><tr><td href='2.3267059' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>2.3267059</font></td></tr></table> > ] 
+# http://schema.org/Number node18
+node18 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>Number</B></td></tr><tr><td href='http://schema.org/Number' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>http://schema.org/Number</font></td></tr></table> > ] 
+# 48.8475274 node17
+node17 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>48.8475274</B></td></tr><tr><td href='48.8475274' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>48.8475274</font></td></tr></table> > ] 
+# http://schema.org/Place node23
+node23 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>Place</B></td></tr><tr><td href='http://schema.org/Place' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>http://schema.org/Place</font></td></tr></table> > ] 
+# http://schema.org/Person node13
+node13 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>Person</B></td></tr><tr><td href='http://schema.org/Person' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>http://schema.org/Person</font></td></tr></table> > ] 
+# http://schema.org/PostalAddress node7
+node7 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>PostalAddress</B></td></tr><tr><td href='http://schema.org/PostalAddress' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>http://schema.org/PostalAddress</font></td></tr></table> > ] 
+# Nb795d989fca546179fe8e8062c96e3d1 node25
+node25 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>my place</B></td></tr><tr><td href='Nb795d989fca546179fe8e8062c96e3d1' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>Nb795d989fca546179fe8e8062c96e3d1</font></td></tr></table> > ] 
+# N06cded7f74af43e3a8b1a387706a4503 node11
+node11 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>Raphael Rieu-Helft</B></td></tr><tr><td href='N06cded7f74af43e3a8b1a387706a4503' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>N06cded7f74af43e3a8b1a387706a4503</font></td></tr><tr><td align='left'>schema:name</td><td align='left'>&quot;Raphael Rieu-Helft&quot;</td></tr></table> > ] 
+# http://example.org/Event node19
+node19 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>Event</B></td></tr><tr><td href='http://example.org/Event' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>http://example.org/Event</font></td></tr></table> > ] 
+# Nc285c620240e41e38c86121cdedcddc6 node2
+node2 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>PHOTO dated 2016-02-21T23:20:00+0000 DUMMY3705286920</B></td></tr><tr><td href='Nc285c620240e41e38c86121cdedcddc6' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>Nc285c620240e41e38c86121cdedcddc6</font></td></tr><tr><td align='left'>my:dateCreatedGranularity</td><td align='left'>&quot;minute&quot;</td></tr><tr><td align='left'>my:idr</td><td align='left'>&quot;photo:10207616392820194@facebook/photos#DUMMY3705286920&quot;</td></tr><tr><td align='left'>schema:dateCreated</td><td align='left'>&quot;2016-02-21T23:20:00+0000&quot;</td></tr><tr><td align='left'>schema:datePublished</td><td align='left'>&quot;2016-02-21T23:20:00+0000&quot;</td></tr><tr><td align='left'>schema:description</td><td align='left'>&quot;Default caption&quot;</td></tr></table> > ] 
+# N60b4ba68b24244b597ef1f6b3fe178d5 node6
+node6 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>my place</B></td></tr><tr><td href='N60b4ba68b24244b597ef1f6b3fe178d5' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>N60b4ba68b24244b597ef1f6b3fe178d5</font></td></tr><tr><td align='left'>schema:addressCountry</td><td align='left'>&quot;France&quot;</td></tr><tr><td align='left'>schema:addressLocality</td><td align='left'>&quot;Paris&quot;</td></tr><tr><td align='left'>schema:addressRegion</td><td align='left'>&quot;France&quot;</td></tr><tr><td align='left'>schema:postalCode</td><td align='left'>&quot;75006&quot;</td></tr><tr><td align='left'>schema:streetAddress</td><td align='left'>&quot;22 rue du Regard&quot;</td></tr></table> > ] 
+# N5b6d320399a14ce398a13f4af6827f65 node3
+node3 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>my place</B></td></tr><tr><td href='N5b6d320399a14ce398a13f4af6827f65' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>N5b6d320399a14ce398a13f4af6827f65</font></td></tr><tr><td align='left'>schema:addressCountry</td><td align='left'>&quot;France&quot;</td></tr><tr><td align='left'>schema:addressLocality</td><td align='left'>&quot;Paris&quot;</td></tr><tr><td align='left'>schema:addressRegion</td><td align='left'>&quot;France&quot;</td></tr><tr><td align='left'>schema:postalCode</td><td align='left'>&quot;75006&quot;</td></tr><tr><td align='left'>schema:streetAddress</td><td align='left'>&quot;22 rue du Regard&quot;</td></tr></table> > ] 
+# Nd68dc5a721e448cc9cbaccc8c4f35f8d node4
+node4 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>g</B></td></tr><tr><td href='Nd68dc5a721e448cc9cbaccc8c4f35f8d' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>Nd68dc5a721e448cc9cbaccc8c4f35f8d</font></td></tr><tr><td align='left'>schema:latitude</td><td align='left'>&quot;48.8475274&quot;^^xsd:double</td></tr><tr><td align='left'>schema:longitude</td><td align='left'>&quot;2.3267059&quot;^^xsd:double</td></tr></table> > ] 
+# N92f5ee2f0599471984459dfef5d57563 node15
+node15 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>my place</B></td></tr><tr><td href='N92f5ee2f0599471984459dfef5d57563' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>N92f5ee2f0599471984459dfef5d57563</font></td></tr></table> > ] 
+# minute node8
+node8 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>minute</B></td></tr><tr><td href='minute' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>minute</font></td></tr></table> > ] 
+# Nf029213915d24522921e69fed4f9fa84 node5
+node5 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>Diane</B></td></tr><tr><td href='Nf029213915d24522921e69fed4f9fa84' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>Nf029213915d24522921e69fed4f9fa84</font></td></tr><tr><td align='left'>schema:name</td><td align='left'>&quot;Diane&quot;</td></tr></table> > ] 
+# http://example.org/Photograph node20
+node20 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>Photograph</B></td></tr><tr><td href='http://example.org/Photograph' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>http://example.org/Photograph</font></td></tr></table> > ] 
+# Nb45d2478967d43ebad56db7e6596294b node12
+node12 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>Raphael Rieu-Helft</B></td></tr><tr><td href='Nb45d2478967d43ebad56db7e6596294b' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>Nb45d2478967d43ebad56db7e6596294b</font></td></tr><tr><td align='left'>schema:name</td><td align='left'>&quot;Raphael Rieu-Helft&quot;</td></tr></table> > ] 
+# http://example.org/Granularity node9
+node9 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>Granularity</B></td></tr><tr><td href='http://example.org/Granularity' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>http://example.org/Granularity</font></td></tr></table> > ] 
+# N84683d948bc74efeaa9d15933efa6290 node16
+node16 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>g</B></td></tr><tr><td href='N84683d948bc74efeaa9d15933efa6290' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>N84683d948bc74efeaa9d15933efa6290</font></td></tr><tr><td align='left'>schema:latitude</td><td align='left'>&quot;48.8475274&quot;^^xsd:double</td></tr><tr><td align='left'>schema:longitude</td><td align='left'>&quot;2.3267059&quot;^^xsd:double</td></tr></table> > ] 
+# N767994e57f284900a3c1a403bfb109c5 node1
+node1 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>EVENT DUMMY5465408935</B></td></tr><tr><td href='N767994e57f284900a3c1a403bfb109c5' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>N767994e57f284900a3c1a403bfb109c5</font></td></tr><tr><td align='left'>my:idr</td><td align='left'>&quot;event:10207616392820194@facebook/events#DUMMY5465408935&quot;</td></tr><tr><td align='left'>schema:description</td><td align='left'>&quot;1st time contextualizing!&quot;</td></tr><tr><td align='left'>schema:endDate</td><td align='left'>&quot;2016-02-21T23:21:00+0000&quot;</td></tr><tr><td align='left'>schema:name</td><td align='left'>&quot;Contextualize test&quot;</td></tr><tr><td align='left'>schema:startDate</td><td align='left'>&quot;2016-02-21T23:19:00+0000&quot;</td></tr></table> > ] 
+# http://schema.org/GeoCoordinates node22
+node22 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>GeoCoordinates</B></td></tr><tr><td href='http://schema.org/GeoCoordinates' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>http://schema.org/GeoCoordinates</font></td></tr></table> > ] 
+# Nf7a366d341c24227b390501a4c92baaf node21
+node21 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>g</B></td></tr><tr><td href='Nf7a366d341c24227b390501a4c92baaf' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>Nf7a366d341c24227b390501a4c92baaf</font></td></tr><tr><td align='left'>schema:latitude</td><td align='left'>&quot;48.8475274&quot;^^xsd:double</td></tr><tr><td align='left'>schema:longitude</td><td align='left'>&quot;2.3267059&quot;^^xsd:double</td></tr></table> > ] 
+# N2dc4324d1b50494e9d29a21baf9b1fc2 node0
+node0 [ shape=none, color=black label=< <table color='#666666' cellborder='0' cellspacing='0' border='1'><tr><td colspan='2' bgcolor='grey'><B>PHOTO dated 2016-02-21T23:20:00+0000 DUMMY5795699530</B></td></tr><tr><td href='N2dc4324d1b50494e9d29a21baf9b1fc2' bgcolor='#eeeeee' colspan='2'><font point-size='10' color='#6666ff'>N2dc4324d1b50494e9d29a21baf9b1fc2</font></td></tr><tr><td align='left'>my:dateCreatedGranularity</td><td align='left'>&quot;minute&quot;</td></tr><tr><td align='left'>my:idr</td><td align='left'>&quot;photo:10207616392820194@facebook/photos#DUMMY5795699530&quot;</td></tr><tr><td align='left'>schema:dateCreated</td><td align='left'>&quot;2016-02-21T23:20:00+0000&quot;</td></tr><tr><td align='left'>schema:datePublished</td><td align='left'>&quot;2016-02-21T23:20:00+0000&quot;</td></tr><tr><td align='left'>schema:description</td><td align='left'>&quot;Default caption&quot;</td></tr></table> > ] 
+}
