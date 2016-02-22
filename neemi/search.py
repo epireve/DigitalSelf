@@ -39,6 +39,8 @@ def simple_keyword_search(request,keyword,service=None):
                     p.parse_photo(item)
                     #print(p.serialize(format='n3'))
                     p.draw(name="search_photo")
+                    ep = p.eventFromPhotograph()
+                    ep.draw('eventFromPhoto', True)
                 related = related_to_fb_photo(request, item)
                 print "Found %s related items" % len(related)
             elif item.data_type=='EVENT':
@@ -55,8 +57,10 @@ def simple_keyword_search(request,keyword,service=None):
             #print item._data['time']
             #if item._data.has_field('message'):
             #    print item.message
-        e.absorb_photograph(p)
-        e.draw('merge')
+        #e.absorb_photograph(p)
+        #e.draw('merge')
+        e.absorb_event(ep)
+        e.draw('absorb_event', True)
         results = facebook_items
     elif service=='gcal':
         gcal_items = GcalData.objects(neemi_user=currentuser.id)
