@@ -183,13 +183,7 @@ class MyGraph(rdflib.Graph):
             self.add((description, RDF.type, schema.Text))
             self.add((main, schema.description, description))
 
-    # def parse_photo(self, photo):
-    #     main = g.bnode(label=?)
-    #     g.add(main, RDF.type, my.Photograph)
-    #     if ... is not None:
-    #         date = Literal(...) #backdated_time
-    #         g.add(date, RDF.type, schema.Date)
-    #         g.add(main, schema.dateCreated, date)
+    #     schema.dateCreated(schema.Date): backdated_time
     #     schema.about(schema.Person): people present and maybe more
     #     schema.datePublished(schema.Date): created_time
     #     schema.dateModified(schema.Date): updated_time
@@ -197,8 +191,7 @@ class MyGraph(rdflib.Graph):
     #     schema.publisher(schema.Person): from
     #     schema.recordedAt(my.Event) with its label?
     #     schema.description(schema.Text): name(caption)
-    #     my.?(?): backdated_time_granularity
-    #     my.dateCreatedGranularity(my.Granularity)
+    #     my.dateCreatedGranularity(my.Granularity): backdated_time_granularity
 
     def parse_event(self, event):
         """
@@ -257,53 +250,50 @@ class MyGraph(rdflib.Graph):
     # schema.startDate(schema.Date)
     # schema.description(schema.Text)
     # schema.name(schema.Text)
-
     # my.startBefore(schema.Date)
     # my.endAfter(schema.Date)
 
 
 
 
-    def place_already_present(self, place, g):
-        geo = g.value(place, schema.geo)
-        if geo is not None:
-            lo = g.value(geo, schema.longitude)
-            la = g.value(geo, schema.latitude)
-            #print('lo-la',lo,la)
-            for selfplace in self.objects(self.mainnode, schema.location):
-                spgeo = self.value(selfplace, schema.geo)
-                if spgeo is not None:
-                    splo = self.value(spgeo, schema.longitude)
-                    spla = self.value(spgeo, schema.latitude)
-                    #print('splo-spla', splo, spla)
-                    if lo == splo and la == spla:
-                        return True
-        return False
-
-    def not_to_be_absorbed(self, n, g, ignored):
-        if not(isinstance(n, BNode) or isinstance(n, Literal)):
-            return
-        if n in ignored:
-            return
-        ignored.add(n)
-        for o in g.objects(n, None):
-            self.not_to_be_absorbed(o, g, ignored)
-
-    def places_not_to_be_absorbed(self, g):
-        """
-
-        :type g: MyGraph
-        """
-        ignored = set()
-        if g.isEventGraph():
-            objects = g.objects(g.mainnode, schema.location)
-        else:
-            assert g.isPhotographGraph()
-            objects = g.objects(g.mainnode, schema.contentLocation)
-        for place in objects:
-            if self.place_already_present(place, g):
-                self.not_to_be_absorbed(place, g, ignored)
-        return ignored
+    # def place_already_present(self, place, g):
+    #     geo = g.value(place, schema.geo)
+    #     if geo is not None:
+    #         lo = g.value(geo, schema.longitude)
+    #         la = g.value(geo, schema.latitude)
+    #         for selfplace in self.objects(self.mainnode, schema.location):
+    #             spgeo = self.value(selfplace, schema.geo)
+    #             if spgeo is not None:
+    #                 splo = self.value(spgeo, schema.longitude)
+    #                 spla = self.value(spgeo, schema.latitude)
+    #                 if lo == splo and la == spla:
+    #                     return True
+    #     return False
+    #
+    # def not_to_be_absorbed(self, n, g, ignored):
+    #     if not(isinstance(n, BNode) or isinstance(n, Literal)):
+    #         return
+    #     if n in ignored:
+    #         return
+    #     ignored.add(n)
+    #     for o in g.objects(n, None):
+    #         self.not_to_be_absorbed(o, g, ignored)
+    #
+    # def places_not_to_be_absorbed(self, g):
+    #     """
+    #
+    #     :type g: MyGraph
+    #     """
+    #     ignored = set()
+    #     if g.isEventGraph():
+    #         objects = g.objects(g.mainnode, schema.location)
+    #     else:
+    #         assert g.isPhotographGraph()
+    #         objects = g.objects(g.mainnode, schema.contentLocation)
+    #     for place in objects:
+    #         if self.place_already_present(place, g):
+    #             self.not_to_be_absorbed(place, g, ignored)
+    #     return ignored
 
     def updateStartBefore(self, date):
         datelit = Literal(date)
@@ -374,24 +364,24 @@ class MyGraph(rdflib.Graph):
         return bn
 
     def absorb_triples(self, g, map):
-        ignored = self.places_not_to_be_absorbed(g)
+        #ignored = self.places_not_to_be_absorbed(g)
         for (s, p, o) in g:
-            if not (s in ignored):
-                ns = self.find_or_create(s, map, g)
-                no = self.find_or_create(o, map, g)
-                if ((p == schema.publisher or p == schema.about)
-                            and s == g.mainnode
-                            and g.isPhotographGraph()
-                            and self.isEventGraph()
-                            and (o, RDF.type, schema.Person) in g):
-                    self.add((self.mainnode, schema.attendee, no))
-                if (p == schema.contentLocation
-                            and s == g.mainnode):
-                    self.add((self.mainnode, schema.location, no))
-                if (o, RDF.type, schema.Date) in g and s == g.mainnode:
-                    self.handleDate(g, s, ns, p, o, no)
-                else:
-                    self.add((ns, p, no))
+            #if not (s in ignored):
+            ns = self.find_or_create(s, map, g)
+            no = self.find_or_create(o, map, g)
+            if ((p == schema.publisher or p == schema.about)
+                        and s == g.mainnode
+                        and g.isPhotographGraph()
+                        and self.isEventGraph()
+                        and (o, RDF.type, schema.Person) in g):
+                self.add((self.mainnode, schema.attendee, no))
+            if (p == schema.contentLocation
+                        and s == g.mainnode):
+                self.add((self.mainnode, schema.location, no))
+            if (o, RDF.type, schema.Date) in g and s == g.mainnode:
+                self.handleDate(g, s, ns, p, o, no)
+            else:
+                self.add((ns, p, no))
         return map
 
 
