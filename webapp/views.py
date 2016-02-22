@@ -56,8 +56,9 @@ def contextualize(request, template='contextualize.html'):
             currentuser = User.objects.get(username=request.user.username)
             doc = form.cleaned_data['document'] #FacebookData
             g = MyGraph()
-            #if doc.data_type == "PHOTO":
-            #    g.parse_photo(doc)
+            if doc.data_type == "PHOTO":
+                g.parse_photo(doc)
+                g=g.eventFromPhotograph()
             if doc.data_type == "EVENT":
                 g.parse_event(doc)
             otherphotos=FacebookData.objects(neemi_user=currentuser.id, idr__ne=doc.idr, data_type='PHOTO')
@@ -69,13 +70,13 @@ def contextualize(request, template='contextualize.html'):
                         p=MyGraph()
                         p.parse_photo(photo)
                         g.absorb_photograph(p)
-            # for event in otherevents:
-            #     if 'start_time' in event.data:
-            #         time = parse_datetime(photo.data['backdated_time'])
-            #         if g.relevantDate(time):
-            #             e=MyGraph()
-            #             e.parse_event(event)
-            #             g.absorb_event(e)
+            for event in otherevents:
+                if 'start_time' in event.data:
+                    time = parse_datetime(event.data['start_time'])
+                    if g.relevantDate(time):
+                        e=MyGraph()
+                        e.parse_event(event)
+                        g.absorb_event(e)
             name = doc.data['id']
             g.draw(name=doc.data['id'], lighten_types=True)
             path = os.path.join(MEDIA_ROOT,name)

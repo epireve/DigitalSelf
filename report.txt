@@ -1,9 +1,13 @@
 Contextualisation de photos Facebook à partir de leurs métadonnées
 
-L'idée du projet est d'extraire des données RDF des métadonnées d'une photo ou d'un évènement issu de Facebook (date et lieu de prise de vue, utilisateurs "taggés"), puis de chercher d'autres éléments pertinents dans les données de l'utilisateur pour obtenir la vue la plus complète possible de l'évènement.
+L'idée du projet est d'extraire des données RDF des métadonnées d'une photo issue de Facebook (date et lieu de prise de vue, utilisateurs "taggés"), puis de chercher d'autres éléments pertinents dans les données de l'utilisateur pour obtenir la vue la plus complète possible de l'évènement.
 
-Notre projet est un fork de Neemi auquel nous avons ajouté cette fonctionnalité : il suffit d'aller dans le menu "Contextualize a Facebook document" depuis Neemi pour visualiser un graphe RDF de l'évènement choisi.
+Notre projet est un fork de Neemi auquel nous avons ajouté cette fonctionnalité : il suffit d'aller dans le menu "Contextualize a Facebook document" de la webapp pour visualiser le graphe RDF obtenu en rassemblant tous les éléments pertinents.
 
+Le code ci-joint est donc en grande partie issu de Neemi : notre code et l'historique de nos commits sont disponibles à l'adresse https://github.com/raphaelrieuhelft/DigitalSelf .
 
+L'essentiel de notre contribution est le fichier RDF/myGraph.py, qui contient une extension de la classe Graph fournie par le module python rdflib. C'est avec cette classe que nous manipulons nos données RDF. Les fonctions qui utilisent cette classe sont essentiellement des vues situées dans webapp/view.py.
 
--Potentiel d'extensions : il suffit d'ajouter des fonctions pour parser d'autres documents et les absorber à myGraph.py
+L'API de Facebook étant assez restrictive (dans les dernières versions de l'API, beaucoup de données ne sont accessibles que si les amis à qui elles appartiennent ont également installé notre application), nous avons décidé d'intégrer aussi à Neemi des formulaires permettant d'ajouter des photos et des évènements Facebook fictifs à la base de données. Ces données ont exactement la même structure que celles qui viennent réellement de Facebook et peuvent être utilisées en même temps que ces dernières.
+
+Notre contribution n'utilise pour l'instant que les données issues de Facebook pour obtenir des données RDF, mais il ne serait pas difficile d'étendre le processus à d'autres réseaux sociaux en ajoutant les méthodes correspondantes à myGraph.py et des cas supplémentaires à la vue correspondant à contextualize.html.

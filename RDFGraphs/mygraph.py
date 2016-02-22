@@ -157,7 +157,7 @@ class MyGraph(rdflib.Graph):
             self.add((main, schema.dateModified, updatedTime))
         if 'place' in data:
             FBLocation = data['place']['location']
-            if FBLocation['name'] is not None:
+            if 'name' in FBLocation:
                 placeLabel = FBLocation['name']
             else:
                 placeLabel = "Photo location"
