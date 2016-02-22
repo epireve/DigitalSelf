@@ -11,6 +11,7 @@ from django.conf import settings
 from webapp.settings import GEOCODING_ID, MEDIA_ROOT
 import string
 from django.utils.dateparse import parse_datetime
+from datetime import timedelta
 
 schema = rdflib.namespace.Namespace('http://schema.org/')
 #my = rdflib.namespace.Namespace('custom/')
@@ -26,6 +27,12 @@ unique_types = {
 
 common_types = [ schema.Text, schema.Date, schema.Number, my.Granularity ]
 
+
+def readDateLiteral(lit):
+    date = lit.toPython()
+    if isinstance(date, unicode):
+        date = parse_datetime(date)
+    return date
 
 class MyGraph(rdflib.Graph):
     def __init__(self, *args, **kwargs):
@@ -157,7 +164,7 @@ class MyGraph(rdflib.Graph):
             self.add((main, schema.dateModified, updatedTime))
         if 'place' in data:
             FBLocation = data['place']['location']
-            if 'name' in FBLocation:
+            if FBLocation['name'] is not None:
                 placeLabel = FBLocation['name']
             else:
                 placeLabel = "Photo location"
@@ -298,6 +305,57 @@ class MyGraph(rdflib.Graph):
                 self.not_to_be_absorbed(place, g, ignored)
         return ignored
 
+    def updateStartBefore(self, date):
+        datelit = Literal(date)
+        currentlit = self.value(self.mainnode, my.startBefore)
+        if currentlit is not None:
+            current = readDateLiteral(currentlit)
+            if current <= date:
+                return
+        self.add((self.mainnode, my.startBefore, datelit))
+        self.add((datelit, RDF.type, schema.Date))
+
+    def updateEndAfter(self, date):
+        datelit = Literal(date)
+        currentlit = self.value(self.mainnode, my.endAfter)
+        if currentlit is not None:
+            print('currentlit',currentlit)
+            print(currentlit.toPython())
+            current = readDateLiteral(currentlit)
+            if current >= date:
+                return
+        self.add((self.mainnode, my.endAfter, datelit))
+        self.add((datelit, RDF.type, schema.Date))
+
+    def handleDate(self, g, s, ns, p, o, no):
+        date = readDateLiteral(o)
+        if p == schema.dateCreated and g.isPhotographGraph:
+            gran = str(g.value(g.mainnode, my.dateCreatedGranularity))
+            if gran == "minute" or gran == "second":
+                dmin = date
+                dmax = date
+            elif gran == "hour":
+                dmin = date - timedelta(hours=1)
+                dmax = date + timedelta(hours=1)
+            elif gran == "day":
+                dmin = date - timedelta(days=1)
+                dmax = date + timedelta(days=1)
+            else:
+                raise Exception('Granularity value is '+gran)
+            self.updateStartBefore(dmax)
+            self.updateEndAfter(dmin)
+        if g.isEventGraph():
+            if p == my.startBefore:
+                self.updateStartBefore(date)
+            if p == my.endAfter:
+                self.updateEndAfter(date)
+            if p == schema.startDate or p == schema.endDate:
+                self.add((ns, p, no))
+
+
+
+
+
     def find_or_create(self, n, map, g):
         if not isinstance(n, BNode):
             return n
@@ -321,7 +379,6 @@ class MyGraph(rdflib.Graph):
             if not (s in ignored):
                 ns = self.find_or_create(s, map, g)
                 no = self.find_or_create(o, map, g)
-                self.add((ns, p, no))
                 if ((p == schema.publisher or p == schema.about)
                             and s == g.mainnode
                             and g.isPhotographGraph()
@@ -331,6 +388,10 @@ class MyGraph(rdflib.Graph):
                 if (p == schema.contentLocation
                             and s == g.mainnode):
                     self.add((self.mainnode, schema.location, no))
+                if (o, RDF.type, schema.Date) in g and s == g.mainnode:
+                    self.handleDate(g, s, ns, p, o, no)
+                else:
+                    self.add((ns, p, no))
         return map
 
 
@@ -340,16 +401,43 @@ class MyGraph(rdflib.Graph):
 
 
     def relevantDate(self, datetime):
-        #TODO
-        return True
+        assert self.isEventGraph()
+        delta = timedelta(hours=12)
+        sdlit = self.value(self.mainnode, schema.startDate)
+        edlit = self.value(self.mainnode, schema.endDate)
+        if sdlit is not None and edlit is not None:
+            sd = readDateLiteral(sdlit)
+            ed = readDateLiteral(edlit)
+            if sd-delta <= datetime and datetime <= ed+delta:
+                return True
+        sblit = self.value(self.mainnode, my.startBefore)
+        ealit = self.value(self.mainnode, my.endAfter)
+        if sblit is not None and ealit is not None:
+            sb = readDateLiteral(sblit)
+            ea = readDateLiteral(ealit)
+            if min(sb,ea) - delta <= datetime and datetime <= max(sb,ea) + delta:
+                return True
+        if sdlit is None and edlit is None and sblit is None and ealit is None:
+            return True
+        return False
+
+
 
     def recordedIn(self, gph):
-        #TODO
-        return True
+        assert gph.isPhotographGraph()
+        dlit = gph.value(gph.mainnode, schema.dateCreated)
+        d = readDateLiteral(dlit)
+        return self.relevantDate(d)
 
     def sameEvent(self, ge):
-        # TODO
-        return True
+        assert ge.isEventGraph()
+        for pred in [ schema.startDate, schema.endDate, my.startBefore, my.endAfter ]:
+            lit = ge.value(ge.mainnode, pred)
+            if lit is not None:
+                d = readDateLiteral(lit)
+                if self.relevantDate(d):
+                    return True
+        return False
 
     def isPhotographGraph(self):
         return (self.mainnode is not None) and (self.mainnode, RDF.type, my.Photograph) in self
