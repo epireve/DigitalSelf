@@ -63,6 +63,7 @@ The instructions below were tested on Linux only! Please, be aware that things a
 - Django settings
   Edit file DigitalSelf/webapps/settings.py specifying name of database to be created to store all user data:
 		Example - connect(‘digital_self’)
+  Edit the MEDIA_ROOT setting to the absolute path to the webapp/static folder on your machine.
 
 - my_settings.py
   To be able to access an API the user has to register an application with their services. During registrations, the API’s will provide at least a pair of id/secrets for each application registered and each application can serve multiple users.
