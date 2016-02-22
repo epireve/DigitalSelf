@@ -1,0 +1,86 @@
+
+##### Prefixes
+schema: http://schema.org/  
+my:  https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/
+
+---
+---
+
+# Photograph #
+
+
+[schema:Thing] > [schema:CreativeWork] > [schema:Photograph] > [my:Photograph]
+
+A photograph.
+
+----------------------------------------------
+
+#### Property from [my:Photograph]
+
+| Property | Expected Type | Description |
+| -------- | ------------- | ----------- |
+| [my:dateCreatedGranularity] | [my:Granularity] | The precision of the date on which the photograph was taken (which would be given by property [schema:dateCreated]).
+
+----------------------------------------------
+
+#### Properties from [schema:CreativeWork] which are most likely to appear
+| Property | Expected Type | Description |
+| -------- | ------------- | ----------- |
+| [schema:about] | [schema:Thing]  | The subject matter of the content. Specific to [my:Photograph]: likely to be a person present on the photograph, of type [schema:Person] (< [schema:Thing]). |
+| [schema:contentLocation] | [schema:Place]  | The location depicted or described in the content. For example, the location in a photograph or painting. |
+| [schema:dateCreated] | [schema:Date] or [schema:DateTime]  | The date on which the CreativeWork was created or the item was added to a DataFeed. [my:Photograph]: the date on which the photograph was taken, preferably of type [schema:Date] and in [ISO 8601 date format][ISO 8601]. |
+| [schema:dateModified] | [schema:Date] or [schema:DateTime]  | The date on which the CreativeWork was most recently modified or when the item's entry was modified within a DataFeed. |
+| [schema:datePublished] | [schema:Date]  | Date of first broadcast/publication. |
+| [schema:publisher] | [schema:Person] or [schema:Organization]  | The publisher of the creative work. |
+| [schema:recordedAt] | [schema:Event]  | The Event where the CreativeWork was recorded. The CreativeWork may capture all or part of the event. Inverse property: [schema:recordedIn]. Specific to [my:Photograph]: likely of type [my:Event] (< [schema:Event]). |
+
+----------------------------------------------
+
+#### Properties from [schema:Thing] which are most likely to appear
+| Property | Expected Type | Description |
+| -------- | ------------- | ----------- |
+| [schema:description] | [schema:Text] | A short description of the item. |
+| [schema:name] | [schema:Text] | The name of the item. |
+
+----------------------------------------------
+----------------------------------------------
+
+Instances of [my:Photograph] are most likely to appear as values for the following property where [schema:CreativeWork] may appear:
+| Property | On Type | Description |
+| -------- | ------------- | ----------- |
+| [schema:recordedIn] | [schema:Event] | The CreativeWork that captured all or part of this Event. Inverse property: [schema:recordedAt]. Specific to [my:Photograph]: most likely on type [my:Event] (< [schema:Event]). |
+
+[schema:Thing]: http://schema.org/Thing
+[schema:Event]: http://schema.org/Event
+[schema:Date]: http://schema.org/Date
+[schema:attendee]: http://schema.org/attendee
+[schema:attendees]: http://schema.org/attendees
+[schema:Person]: http://schema.org/Person
+[schema:endDate]: http://schema.org/endDate
+[schema:location]: http://schema.org/location
+[schema:Place]: http://schema.org/Place
+[schema:Text]: http://schema.org/Text
+[schema:PostalAddress]: http://schema.org/PostalAddress
+[schema:organizer]: http://schema.org/organizer
+[schema:recordedIn]: http://schema.org/recordedIn
+[schema:CreativeWork]: http://schema.org/CreativeWork
+[schema:recordedAt]: http://schema.org/recordedAt
+[schema:startDate]: http://schema.org/startDate
+[schema:description]: http://schema.org/description
+[schema:name]: http://schema.org/name
+[schema:Organization]: http://schema.org/Organization
+[schema:contentLocation]: http://schema.org/contentLocation
+[schema:dateCreated]: http://schema.org/dateCreated
+[schema:DateTime]: http://schema.org/DateTime
+[schema:dateModified]: http://schema.org/dateModified
+[schema:datePublished]: http://schema.org/datePublished
+[schema:publisher]: http://schema.org/publisher
+[schema:Photograph]: http://schema.org/Photograph
+[schema:about]: http://schema.org/about
+[my:Event]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Event
+[my:startBefore]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/startBefore
+[my:endAfter]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/endAfter
+[my:Photograph]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Photograph
+[my:dateCreatedGranularity]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/dateCreatedGranularity
+[my:Granularity]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Granularity
+[ISO 8601]: https://en.wikipedia.org/wiki/ISO_8601

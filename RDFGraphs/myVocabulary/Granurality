@@ -1,0 +1,33 @@
+
+##### Prefixes
+schema: http://schema.org/  
+my:  https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/
+
+---
+---
+
+# Granularity #
+
+
+[schema:Thing] > [schema:Intangible] > [schema:Quantity] > [my:Granularity]
+
+Duration representing an incertitude about a time. Value is one of the following:  
+
+    year, month, day, hour, min, none
+    
+
+----------------------------------------------
+----------------------------------------------
+
+Instances of [my:Granularity] may appear as values for the following property:
+| Property | On Type | Description |
+| -------- | ------------- | ----------- |
+| [my:dateCreatedGranularity] | [my:Photograph] | The precision of the date on which the photograph was taken. |
+
+[schema:Thing]: http://schema.org/Thing
+[schema:Intangible]: http://schema.org/Intangible
+[schema:Quantity]: http://schema.org/Quantity
+[my:Photograph]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Photograph
+[my:dateCreatedGranularity]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/dateCreatedGranularity
+[my:Granularity]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Granularity
+[ISO 8601]: https://en.wikipedia.org/wiki/ISO_8601

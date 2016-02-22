@@ -14,10 +14,8 @@ from django.utils.dateparse import parse_datetime
 from datetime import timedelta
 
 schema = rdflib.namespace.Namespace('http://schema.org/')
-#my = rdflib.namespace.Namespace('custom/')
-my = rdflib.namespace.Namespace('http://example.org/')
+my = rdflib.namespace.Namespace('https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/')
 
-#save_folder = os.path.join(os.path.dirname(__file__), 'tmp')
 save_folder = MEDIA_ROOT
 
 unique_types = {
@@ -302,7 +300,7 @@ class MyGraph(rdflib.Graph):
             current = readDateLiteral(currentlit)
             if current <= date:
                 return
-            self.remove((self.mainnode, my.startBefore, None)) #NEW
+            self.remove((self.mainnode, my.startBefore, None))
         self.add((self.mainnode, my.startBefore, datelit))
         self.add((datelit, RDF.type, schema.Date))
 
@@ -315,7 +313,7 @@ class MyGraph(rdflib.Graph):
             current = readDateLiteral(currentlit)
             if current >= date:
                 return
-            self.remove((self.mainnode, my.endAfter, None))  # NEW
+            self.remove((self.mainnode, my.endAfter, None))
         self.add((self.mainnode, my.endAfter, datelit))
         self.add((datelit, RDF.type, schema.Date))
 

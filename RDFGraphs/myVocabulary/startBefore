@@ -1,0 +1,29 @@
+
+##### Prefixes
+schema: http://schema.org/  
+my:  https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/
+
+---
+---
+
+# startBefore #
+
+
+[schema:Thing] > [schema:Property] > [my:startBefore]
+
+The latest possible start date and time of the item (in [ISO 8601 date format][ISO 8601]).
+
+##### Values expected to be one of these types
+
+[schema:Date]
+
+##### Used on these types
+
+[my:Event]
+    
+[schema:Thing]: http://schema.org/Thing
+[schema:Date]: http://schema.org/Date
+[schema:Property]: http://schema.org/Property
+[my:Event]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Event
+[my:startBefore]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/startBefore
+[ISO 8601]: https://en.wikipedia.org/wiki/ISO_8601

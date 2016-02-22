@@ -1,0 +1,29 @@
+
+##### Prefixes
+schema: http://schema.org/  
+my:  https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/
+
+---
+---
+
+# dateCreatedGranularity #
+
+
+[schema:Thing] > [schema:Property] > [my:dateCreatedGranularity]
+
+The precision of the date and time on which the item was created.
+
+##### Values expected to be one of these types
+
+[my:Granularity]
+
+##### Used on these types
+
+[my:Photograph]
+    
+[schema:Thing]: http://schema.org/Thing
+[schema:Property]: http://schema.org/Property
+[my:Photograph]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Photograph
+[my:dateCreatedGranularity]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/dateCreatedGranularity
+[my:Granularity]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Granularity
+[ISO 8601]: https://en.wikipedia.org/wiki/ISO_8601

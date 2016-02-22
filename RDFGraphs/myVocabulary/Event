@@ -1,0 +1,79 @@
+
+##### Prefixes
+schema: http://schema.org/  
+my:  https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/
+
+---
+---
+
+# Event #
+
+
+[schema:Thing] > [schema:Event] > [my:Event]
+
+An event happening at a certain time and location.
+
+----------------------------------------------
+
+#### Properties from [my:Event]
+
+| Property | Expected Type | Description |
+| -------- | ------------- | ----------- |
+| [my:startBefore] | [schema:Date] | The latest possible start date and time of the item (in [ISO 8601 date format][ISO 8601]).
+| [my:endAfter] | [schema:Date] | The earliest possible end date and time of the item (in [ISO 8601 date format][ISO 8601]).
+
+----------------------------------------------
+
+#### Properties from [schema:Event] which are most likely to appear
+| Property | Expected Type | Description |
+| -------- | ------------- | ----------- |
+| [schema:attendee] | [schema:Person] or [schema:Organization] | A person or organization attending the event. Supersedes [schema:attendees]. [my:Event] specific note: likely type [schema:Person]. |
+| [schema:endDate] | [schema:Date] | The end date and time of the item (in [ISO 8601 date format][ISO 8601]). |
+| [schema:location] | [schema:Place] or [schema:Text] or [schema:PostalAddress] | The location of for example where the event is happening, an organization is located, or where an action takes place. |
+| [schema:organizer] | [schema:Person] or [schema:Organization] | An organizer of an Event. [my:Event] specific note: likely type [schema:Person]. |
+| [schema:recordedIn] | [schema:CreativeWork] | The CreativeWork that captured all or part of this Event. Inverse property: [schema:recordedAt]. [my:Event] specific note: likely of type [my:Photograph] (< ... < [schema:CreativeWork]). |
+| [schema:startDate] | [schema:Date] | The start date and time of the item (in [ISO 8601 date format][ISO 8601]). |
+
+----------------------------------------------
+
+#### Properties from [schema:Thing] which are most likely to appear
+| Property | Expected Type | Description |
+| -------- | ------------- | ----------- |
+| [schema:description] | [schema:Text] | A short description of the item. |
+| [schema:name] | [schema:Text] | The name of the item. |
+
+----------------------------------------------
+----------------------------------------------
+
+Instances of [my:Event] are most likely to appear as values for the following property where [schema:Event] may appear:
+| Property | On Type | Description |
+| -------- | ------------- | ----------- |
+| [schema:recordedAt] | [schema:CreativeWork] | The Event where the CreativeWork was recorded. The CreativeWork may capture all or part of the event. Inverse property: [schema:recordedIn]. Specific to [my:Event]: most likely on type [my:Photograph] (< ... < [schema:CreativeWork]). |
+
+
+
+
+[schema:Thing]: http://schema.org/Thing
+[schema:Event]: http://schema.org/Event
+[schema:Date]: http://schema.org/Date
+[schema:attendee]: http://schema.org/attendee
+[schema:attendees]: http://schema.org/attendees
+[schema:Person]: http://schema.org/Person
+[schema:endDate]: http://schema.org/endDate
+[schema:location]: http://schema.org/location
+[schema:Place]: http://schema.org/Place
+[schema:Text]: http://schema.org/Text
+[schema:PostalAddress]: http://schema.org/PostalAddress
+[schema:organizer]: http://schema.org/organizer
+[schema:recordedIn]: http://schema.org/recordedIn
+[schema:CreativeWork]: http://schema.org/CreativeWork
+[schema:recordedAt]: http://schema.org/recordedAt
+[schema:startDate]: http://schema.org/startDate
+[schema:description]: http://schema.org/description
+[schema:name]: http://schema.org/name
+[schema:Organization]: http://schema.org/Organization
+[my:Event]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Event
+[my:startBefore]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/startBefore
+[my:endAfter]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/endAfter
+[my:Photograph]: https://github.com/raphaelrieuhelft/DigitalSelf/tree/master/RDFGraphs/myVocabulary/Photograph
+[ISO 8601]: https://en.wikipedia.org/wiki/ISO_8601
