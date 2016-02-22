@@ -46,6 +46,7 @@ An event happening at a certain time and location.
 ----------------------------------------------
 
 Instances of [my:Event] are most likely to appear as values for the following property where [schema:Event] may appear:
+
 | Property | On Type | Description |
 | -------- | ------------- | ----------- |
 | [schema:recordedAt] | [schema:CreativeWork] | The Event where the CreativeWork was recorded. The CreativeWork may capture all or part of the event. Inverse property: [schema:recordedIn]. Specific to [my:Event]: most likely on type [my:Photograph] (< ... < [schema:CreativeWork]). |

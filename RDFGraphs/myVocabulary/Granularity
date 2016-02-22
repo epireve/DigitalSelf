@@ -20,6 +20,7 @@ Duration representing an incertitude about a time. Value is one of the following
 ----------------------------------------------
 
 Instances of [my:Granularity] may appear as values for the following property:
+
 | Property | On Type | Description |
 | -------- | ------------- | ----------- |
 | [my:dateCreatedGranularity] | [my:Photograph] | The precision of the date on which the photograph was taken. |

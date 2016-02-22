@@ -46,6 +46,7 @@ A photograph.
 ----------------------------------------------
 
 Instances of [my:Photograph] are most likely to appear as values for the following property where [schema:CreativeWork] may appear:
+
 | Property | On Type | Description |
 | -------- | ------------- | ----------- |
 | [schema:recordedIn] | [schema:Event] | The CreativeWork that captured all or part of this Event. Inverse property: [schema:recordedAt]. Specific to [my:Photograph]: most likely on type [my:Event] (< [schema:Event]). |
