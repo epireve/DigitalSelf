@@ -257,8 +257,46 @@ class MyGraph(rdflib.Graph):
 
 
 
+    def place_already_present(self, place, g):
+        geo = g.value(place, schema.geo)
+        if geo is not None:
+            lo = g.value(geo, schema.longitude)
+            la = g.value(geo, schema.latitude)
+            #print('lo-la',lo,la)
+            for selfplace in self.objects(self.mainnode, schema.location):
+                spgeo = self.value(selfplace, schema.geo)
+                if spgeo is not None:
+                    splo = self.value(spgeo, schema.longitude)
+                    spla = self.value(spgeo, schema.latitude)
+                    #print('splo-spla', splo, spla)
+                    if lo == splo and la == spla:
+                        return True
+        return False
 
+    def not_to_be_absorbed(self, n, g, ignored):
+        if not(isinstance(n, BNode) or isinstance(n, Literal)):
+            return
+        if n in ignored:
+            return
+        ignored.add(n)
+        for o in g.objects(n, None):
+            self.not_to_be_absorbed(o, g, ignored)
 
+    def places_not_to_be_absorbed(self, g):
+        """
+
+        :type g: MyGraph
+        """
+        ignored = set()
+        if g.isEventGraph():
+            objects = g.objects(g.mainnode, schema.location)
+        else:
+            assert g.isPhotographGraph()
+            objects = g.objects(g.mainnode, schema.contentLocation)
+        for place in objects:
+            if self.place_already_present(place, g):
+                self.not_to_be_absorbed(place, g, ignored)
+        return ignored
 
     def find_or_create(self, n, map, g):
         if not isinstance(n, BNode):
@@ -278,17 +316,21 @@ class MyGraph(rdflib.Graph):
         return bn
 
     def absorb_triples(self, g, map):
+        ignored = self.places_not_to_be_absorbed(g)
         for (s, p, o) in g:
-            ns = self.find_or_create(s, map, g)
-            no = self.find_or_create(o, map, g)
-            self.add((ns, p, no))
-            if ((p == schema.publisher or p == schema.about)
-                        and s == g.mainnode
-                        and g.isPhotographGraph()
-                        and self.isEventGraph()
-                        and (o, RDF.type, schema.Person) in g):
-                print('add attendee')
-                self.add((self.mainnode, schema.attendee, no))
+            if not (s in ignored):
+                ns = self.find_or_create(s, map, g)
+                no = self.find_or_create(o, map, g)
+                self.add((ns, p, no))
+                if ((p == schema.publisher or p == schema.about)
+                            and s == g.mainnode
+                            and g.isPhotographGraph()
+                            and self.isEventGraph()
+                            and (o, RDF.type, schema.Person) in g):
+                    self.add((self.mainnode, schema.attendee, no))
+                if (p == schema.contentLocation
+                            and s == g.mainnode):
+                    self.add((self.mainnode, schema.location, no))
         return map
 
 
