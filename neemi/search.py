@@ -38,14 +38,16 @@ def simple_keyword_search(request,keyword,service=None):
                     p = MyGraph()
                     p.parse_photo(item)
                     #print(p.serialize(format='n3'))
-                    p.draw(name="search_photo")
+                    p.elaborate_my_types()
+                    p.draw(name="search_photo", lighten_types=True)
                     ep = p.eventFromPhotograph()
                     ep.save('ep')
                     ep.draw('eventFromPhoto', True)
             elif item.data_type=='EVENT':
                 e = MyGraph()
                 e.parse_event(item)
-                e.draw(name='search_event')
+                e.elaborate_my_types()
+                e.draw(name='search_event', lighten_types=True)
                 print "Found an event"
             elif item.data_type=='FRIEND':
                 print "Found friends"

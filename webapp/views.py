@@ -78,6 +78,7 @@ def contextualize(request, template='contextualize.html'):
                         e.parse_event(event)
                         g.absorb_event(e)
             name = doc.data['id']
+            g.elaborate_my_types()
             g.draw(name=doc.data['id'], lighten_types=True)
             path = os.path.join(MEDIA_ROOT,name)
             image_data = open(path+".png", "rb").read()

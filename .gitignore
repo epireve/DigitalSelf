@@ -8,3 +8,10 @@ webapp/keys.py
 
 RDFGraphs/tmp
 !RDFGraphs/project_statement_example.n3
+*.aux
+demo.log
+*.nav
+demo.out
+demo.synctex.gz
+demo.toc
+demo.snm

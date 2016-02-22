@@ -67,23 +67,23 @@ class MyGraph(rdflib.Graph):
             self.add((address, RDF.type, schema.PostalAddress))
             self.add((place, schema.address, address))
             if 'street' in fblocation:
-                streetAddress = Literal(fblocation['street'])
+                streetAddress = Literal(unidecode(fblocation['street']))
                 self.add((streetAddress, RDF.type, schema.Text))
                 self.add((address, schema.streetAddress, streetAddress))
             if 'zip' in fblocation:
-                zip = Literal(fblocation['zip'])
+                zip = Literal(unidecode(fblocation['zip']))
                 self.add((zip, RDF.type, schema.Text))
                 self.add((address, schema.postalCode, zip))
             if 'city' in fblocation:
-                city = Literal(fblocation['city'])
+                city = Literal(unidecode(fblocation['city']))
                 self.add((city, RDF.type, schema.Text))
                 self.add((address, schema.addressLocality, city))
             if 'state' in fblocation:
-                state = Literal(fblocation['state'])
+                state = Literal(unidecode(fblocation['state']))
                 self.add((state, RDF.type, schema.Text))
                 self.add((address, schema.addressRegion, state))
             if 'country' in fblocation:
-                country = Literal(fblocation['country'])
+                country = Literal(unidecode(fblocation['country']))
                 self.add((country, RDF.type, schema.Text))
                 self.add((address, schema.addressCountry, country))
         geo = self.bnode(label="g")
@@ -164,14 +164,14 @@ class MyGraph(rdflib.Graph):
             self.add((main, schema.dateModified, updatedTime))
         if 'place' in data:
             FBLocation = data['place']['location']
-            if FBLocation['name'] is not None:
-                placeLabel = FBLocation['name']
+            if 'name' in FBLocation:
+                placeLabel = unidecode(FBLocation['name'])
             else:
                 placeLabel = "Photo location"
             place = self.bnode(label=placeLabel)
             self.add((place, RDF.type, schema.Place))
-            self.add((main, schema.contentLocation, place))
             self.enrich_place_with_fb_data(place, FBLocation)
+            self.add((main, schema.contentLocation, place))
         if 'from' in data:
             uploader = self.add_person(unidecode(data['from']['name']))
             self.add((main, schema.publisher, uploader))
@@ -231,8 +231,8 @@ class MyGraph(rdflib.Graph):
             self.add((main, schema.endDate, endTime))
         if 'place' in data:
             FBLocation = data['place']['location']
-            if FBLocation['name'] is not None:
-                placeLabel = FBLocation['name']
+            if 'name' in FBLocation:
+                placeLabel = unidecode(FBLocation['name'])
             else:
                 placeLabel = "Event location"
             place = self.bnode(label=placeLabel)

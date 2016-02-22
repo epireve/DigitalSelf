@@ -1,0 +1,141 @@
+\documentclass[18pt]{beamer}
+\usepackage{etex}
+\usepackage{beamerthemesplit} % new
+\usetheme[secheader]{Madrid}
+%\usetheme{Warsaw}
+\usecolortheme{dolphin}
+\usepackage{graphicx}
+%\usepackage{landscape}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[frenchb]{babel}
+\usepackage{amstext}
+\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+\usepackage{pgf,tikz}
+\usepackage{listings}
+
+
+%\usepackage{titletoc}
+
+\newcounter{moncompteur}
+\newtheorem{q}[moncompteur]{\textbf{Question}}{}
+\newtheorem{prop}[moncompteur]{\textbf{Proposition}}{}
+\newtheorem{df}[moncompteur]{\textbf{Définition}}{}
+\newtheorem*{df*}{\textbf{Définition}}{}
+\newtheorem*{prop*}{\textbf{Proposition}}{}
+\newtheorem*{theo*}{\textbf{Théorème}}{}
+
+\newtheorem{rem}[moncompteur]{\textbf{Remarque}}{}
+\newtheorem{theo}[moncompteur]{\textbf{Théorème}}{}
+\newtheorem{conj}[moncompteur]{\textbf{Conjecture}}{}
+\newtheorem{cor}[moncompteur]{\textbf{Corollaire}}{}
+\newtheorem{lm}[moncompteur]{\textbf{Lemme}}{}
+%\newtheorem{nota}[moncompteur]{\textbf{Notation}}{}
+%\newtheorem{conv}[moncompteur]{\textbf{Convention}}{}
+\newtheorem{exa}[moncompteur]{\textbf{Exemple}}{}
+\newtheorem{ex}[moncompteur]{\textbf{Exercice}}{}
+%\newtheorem{app}[moncompteur]{\textbf{Application}}{}
+%\newtheorem{prog}[moncompteur]{\textbf{Algorithme}}{}
+%\newtheorem{hyp}[moncompteur]{\textbf{Hypothèse}}{}
+\newenvironment{dem}{\noindent\textbf{Preuve}\\}{\flushright$\blacksquare$\\}
+\newcommand{\cg}{[\kern-0.15em [}
+\newcommand{\cd}{]\kern-0.15em]}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\U}{\mathbb{U}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\B}{\mathbb{B}}
+\newcommand{\Prob}{\mathbb P}
+\newcommand{\card}{\mathrm{card}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+%\pgfplotsset{compat=newest}
+\newcommand{\La}{\mathcal{L}}
+\newcommand{\Ne}{\mathcal{N}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\Ss}{\textsc{safestay}}
+\newcommand{\Sg}{\textsc{safego}}
+\newcommand{\M}{\textsc{move}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\V}{\mathcal V}
+\newcommand{\A}{\mathcal A}
+\newcommand{\T}{\mathcal T}
+\newcommand{\Ca}{\mathcal C}
+\setlength{\parindent}{0pt}
+\newcommand{\myrightleftarrows}[1]{\mathrel{\substack{\xrightarrow{#1} \\[-.6ex] \xleftarrow{#1}}}}
+\newcommand{\longrightleftarrows}{\myrightleftarrows{\rule{1cm}{0cm}}}
+\newcommand{\ZnZ}{\Z/n\Z}
+
+
+\graphicspath{{./}}
+
+
+\setbeamertemplate{navigation symbols}{%
+	%\insertslidenavigationsymbol
+	%\insertframenavigationsymbol
+	%\insertsubsectionnavigationsymbol
+	%\insertsectionnavigationsymbol
+	%\insertdocnavigationsymbol
+	%\insertbackfindforwardnavigationsymbol
+}
+\title{Contextualization of Facebook documents}
+\author{Diane Gallois-Wong, Raphaël Rieu-Helft}
+\date{February 22, 2016}
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Neemi platform}
+\begin{itemize}
+	\item{Django webapp that extracts user data from various social networks and stores it in a MongoDB database}
+	\vspace{1em}
+	\item{Our project is a fork of Neemi with added features}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Contextualizing a Facebook document}
+	\begin{itemize}
+		\item{Choose a photo or event in the database}
+		\item{Build a corresponding RDF graph}
+		\item{Fetch related items in the database}
+		\item{Build their RDF graphs and absorb them into the first one}
+	\end{itemize}
+\end{frame}
+\begin{frame}
+	\frametitle{Facebook API limitations}
+	\begin{itemize}
+		\item{The latest versions of the API is very restrictive with data from friends who didn't install our app}
+		\item{Getting interesting data is difficult}
+		\item{New Neemi feature : add mock documents}
+	\end{itemize}
+\end{frame}
+\begin{frame}
+	\frametitle{Absorbing graphs : algorithm}
+	
+	%TODO
+	
+\end{frame}
+\begin{frame}
+	\frametitle{Some technical choices}
+	\begin{itemize}
+		\item{Merging location information : geocode everything, then compare coordinates}
+		\item{Deciding if a document is relevant to the event : time-based for now, could be improved}
+	\end{itemize}
+\end{frame}
+\begin{frame}
+	\frametitle{Potential extensions}
+	\begin{itemize}
+		\item{Handle documents from other sources than Facebook : new methods need to be added but no conceptual difficulty}
+		\item{Better heuristics to deduce if an item is related to the event}
+	\end{itemize}
+\end{frame}
+
+\end{document}

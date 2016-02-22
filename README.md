@@ -3,7 +3,6 @@ DigitalSelf
 
 The instructions below were tested on Linux only! Please, be aware that things are constantly changing and some installation commands may stop working. However, the package requirements are still the same.
 
-Any comments or questions, please contact rutgersneemi@gmail.com
 
 ##### Installation 	
  - mongoDB 2.4.2  
@@ -23,6 +22,10 @@ Any comments or questions, please contact rutgersneemi@gmail.com
    <https://code.google.com/p/google-api-python-client/wiki/OAuth2Client>
  - requests (pip install requests) 
    <http://www.python-requests.org>     
+ - rdflib (pip install rdflib)
+ - geopy (pip install geopy)
+ - unidecode (pip install unidecode)
+ - GraphViz <http://www.graphviz.org/> : the dot command should be in your $PATH.
 
 
 ##### APIs     
@@ -60,10 +63,12 @@ Any comments or questions, please contact rutgersneemi@gmail.com
 - Django settings
   Edit file DigitalSelf/webapps/settings.py specifying name of database to be created to store all user data:
 		Example - connect(‘digital_self’)
+  Edit the MEDIA_ROOT setting to the absolute path to the webapp/static folder on your machine.
 
-- keys.py
+- my_settings.py
   To be able to access an API the user has to register an application with their services. During registrations, the API’s will provide at least a pair of id/secrets for each application registered and each application can serve multiple users.
-  A skeleton of the keys.py file can be found in DigitalSelf/webapp/keys.py
+The user should provide the relevant keys in the file DigitalSelf/my_settings.py
+  A skeleton of the file can be found in DigitalSelf/webapp/keys.py
   
   1. Registering a Dropbox application:
 	Go to <https://www.dropbox.com/developers/apps> and follow the steps to create a new application. At the end, add the app key and secret to the keys.py file.
@@ -113,7 +118,7 @@ Any comments or questions, please contact rutgersneemi@gmail.com
 			<https://docs.djangoproject.com/en/1.5/intro/tutorial01/>
 
   - Open a browser and type:
-    lvh.me:8000
+    127.0.0.1:8000
 
 - The DigitalSelf interface
   - The first page asks for a user and password. A new user does not need to be registered a priori to have access to the application. The registration is done as soon as the user enters with the desired username and password. 
