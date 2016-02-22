@@ -1,0 +1,9 @@
+Contextualisation de photos Facebook à partir de leurs métadonnées
+
+L'idée du projet est d'extraire des données RDF des métadonnées d'une photo ou d'un évènement issu de Facebook (date et lieu de prise de vue, utilisateurs "taggés"), puis de chercher d'autres éléments pertinents dans les données de l'utilisateur pour obtenir la vue la plus complète possible de l'évènement.
+
+Notre projet est un fork de Neemi auquel nous avons ajouté cette fonctionnalité : il suffit d'aller dans le menu "Contextualize a Facebook document" depuis Neemi pour visualiser un graphe RDF de l'évènement choisi.
+
+
+
+-Potentiel d'extensions : il suffit d'ajouter des fonctions pour parser d'autres documents et les absorber à myGraph.py

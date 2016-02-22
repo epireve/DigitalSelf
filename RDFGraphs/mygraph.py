@@ -7,7 +7,8 @@ from rdflib import RDF, RDFS, BNode, Literal
 import rdflib.tools.rdf2dot
 from unidecode import unidecode
 from geopy.geocoders.googlev3 import GoogleV3
-from my_settings import GEOCODING_ID
+from django.conf import settings
+from webapp.settings import GEOCODING_ID, MEDIA_ROOT
 import string
 from django.utils.dateparse import parse_datetime
 
@@ -15,8 +16,8 @@ schema = rdflib.namespace.Namespace('http://schema.org/')
 #my = rdflib.namespace.Namespace('custom/')
 my = rdflib.namespace.Namespace('http://example.org/')
 
-tmp = os.path.join(os.path.dirname(__file__), 'tmp')
-
+#save_folder = os.path.join(os.path.dirname(__file__), 'tmp')
+save_folder = MEDIA_ROOT
 
 unique_types = {
     schema.Person: schema.name,
@@ -329,20 +330,20 @@ class MyGraph(rdflib.Graph):
                 g.remove((None, RDF.type, t))
             g.draw(name=name)
             return
-        path_dot = os.path.join(tmp, name+'_dot')
+        path_dot = os.path.join(save_folder, name+'_dot')
         with io.open(path_dot, mode='w', newline='') as f:
             rdflib.tools.rdf2dot.rdf2dot(self, f)
-        path_png = os.path.join(tmp, name+'.png')
+        path_png = os.path.join(save_folder, name+'.png')
         subprocess.call(["dot", "-Tpng", path_dot, "-o", path_png])
 
     def save(self, name="default"):
-        path = os.path.join(tmp, name+'.n3')
+        path = os.path.join(save_folder, name+'.n3')
         self.serialize(path, 'n3')
 
 
 if __name__ == '__main__':
     g = MyGraph()
-    g.parse(tmp+'/project_statement_example.n3', format='n3')
+    g.parse(save_folder+'/project_statement_example.n3', format='n3')
     #print(g.serialize(format='n3'))
     #g.draw('project_statement_example')
     pass

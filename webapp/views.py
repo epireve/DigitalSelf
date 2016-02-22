@@ -7,7 +7,8 @@ from neemi.search import simple_keyword_search
 from neemi.stats import *
 from neemi.models import *
 from django.utils.dateparse import parse_datetime
-import time, datetime, random, string
+from settings import MEDIA_ROOT
+import time, datetime, random, string, os
 from mongoengine.base import BaseDict
 from RDFGraphs.mygraph import MyGraph
 
@@ -75,8 +76,11 @@ def contextualize(request, template='contextualize.html'):
             #             e=MyGraph()
             #             e.parse_event(event)
             #             g.absorb_event(e)
+            name = doc.data['id']
             g.draw(name=doc.data['id'], lighten_types=True)
-            dform = form
+            path = os.path.join(MEDIA_ROOT,name)
+            image_data = open(path+".png", "rb").read()
+            return HttpResponse(image_data, content_type="image/png")
         else:
             print "invalid form"
             dform = DocumentSelectionForm()
@@ -128,13 +132,13 @@ def add_fb_photo(request, template='add_fb_photo.html'):
             tags=dict([('data', tagsdata)])
             event=None
             if data['event']:
-                event = dict([('data', data['event']['data'])]) #doesn't work
+                event = dict([('data', data['event'].data)])
             location_fields = ("name", "street", "zip", "city", "state", "country", "latitude", "longitude")
             location = dict()
             for field in location_fields:
                 if data[field]:
                     location[field]=data[field]
-            if location["name"]:
+            if 'name' in location:
                 place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
             else:
                 place = dict([('id', "DUMMY"), ('location', location)])
@@ -142,13 +146,6 @@ def add_fb_photo(request, template='add_fb_photo.html'):
             if location:
                 photodata['place']=place
             newphoto = FacebookData(idr=idr, data=photodata, neemi_user=currentuser, facebook_user=service_user, data_type='PHOTO', time=datetime.datetime.today()).save()
-
-            # #TESTING
-            # g = MyGraph()
-            # g.parse_photo(newphoto)
-            # print(g.serialize(format='n3'))
-            # g.draw(name="truc", lighten_types=True)
-
             dform = form
         else:
             print "invalid form"
@@ -200,7 +197,7 @@ def add_fb_event(request, template='add_fb_event.html'):
             for field in location_fields:
                 if data[field]:
                     location[field]=data[field]
-            if location["name"]:
+            if 'name' in location:
                 place = dict([('id', "DUMMY"), ('name', location['name']), ('location', location)])
             else:
                 place = dict([('id', "DUMMY"), ('location', location)])
@@ -208,13 +205,6 @@ def add_fb_event(request, template='add_fb_event.html'):
             if location:
                 eventdata['place']=place
             newevent = FacebookData(idr=idr, data = eventdata, neemi_user = currentuser, facebook_user = service_user, data_type='EVENT', time=datetime.datetime.today()).save()
-
-            # #TESTING
-            # g = MyGraph()
-            # g.parse_event(newevent)
-            # print(g.serialize(format='n3'))
-            # g.draw(name="truc", lighten_types=True)
-
             dform = form
         else:
             print "invalid form"
