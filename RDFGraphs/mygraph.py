@@ -302,6 +302,7 @@ class MyGraph(rdflib.Graph):
             current = readDateLiteral(currentlit)
             if current <= date:
                 return
+            self.remove((self.mainnode, my.startBefore, None)) #NEW
         self.add((self.mainnode, my.startBefore, datelit))
         self.add((datelit, RDF.type, schema.Date))
 
@@ -314,6 +315,7 @@ class MyGraph(rdflib.Graph):
             current = readDateLiteral(currentlit)
             if current >= date:
                 return
+            self.remove((self.mainnode, my.endAfter, None))  # NEW
         self.add((self.mainnode, my.endAfter, datelit))
         self.add((datelit, RDF.type, schema.Date))
 
