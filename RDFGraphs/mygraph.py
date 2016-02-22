@@ -24,7 +24,7 @@ unique_types = {
     my.Photograph: my.idr,
 }
 
-common_types = [ schema.Text, schema.Date ]
+common_types = [ schema.Text, schema.Date, schema.Number, my.Granularity ]
 
 
 class MyGraph(rdflib.Graph):
@@ -45,7 +45,6 @@ class MyGraph(rdflib.Graph):
         assert type in unique_types
         id_prop = unique_types[type]
         if (None, id_prop, id) in self:
-            print('bnode_find found existing node', id)
             return self.value(predicate=id_prop, object=id)
         return self.bnode(label=label)
 
@@ -259,33 +258,42 @@ class MyGraph(rdflib.Graph):
 
 
 
-    def create_or_find_absorbed_node(self, g, n):
+
+
+    def find_or_create(self, n, map, g):
         if not isinstance(n, BNode):
             return n
+        if n in map:
+            return map[n]
         type = g.value(subject=n, predicate=RDF.type)
         if type in unique_types:
             id_prop = unique_types[type]
             id = g.value(subject=n, predicate=id_prop)
-            #if (None, id_prop, id) in self:
-            #    return self.value(predicate=id_prop, object=id)
             for subj in self.subjects(id_prop, id):
                 if (subj, RDF.type, type) in self:
+                    map[n] = subj
                     return subj
-        return self.bnode()
+        bn = self.bnode()
+        map[n] = bn
+        return bn
 
-    def absorb_node(self, g, subj):
-        type = g.value(subject=subj, predicate=RDF.type)
-        if type is schema.Place:
-            pass #TODO
-        nsubj = self.create_or_find_absorbed_node(g, subj)
-        for (pred, obj) in g.predicate_objects(subj):
-            nobj = self.absorb_node(g, obj)
-            self.add((nsubj, pred, nobj))
-            if ((pred == schema.publisher or pred == schema.about)
-                    and (obj, RDF.type, schema.Person) in g
-                    and (self.mainnode, RDF.type, my.Event) in self):
-                self.add((self.mainnode, schema.attendee, nobj))
-        return nsubj
+    def absorb_triples(self, g, map):
+        for (s, p, o) in g:
+            ns = self.find_or_create(s, map, g)
+            no = self.find_or_create(o, map, g)
+            self.add((ns, p, no))
+            if ((p == schema.publisher or p == schema.about)
+                        and s == g.mainnode
+                        and g.isPhotographGraph()
+                        and self.isEventGraph()
+                        and (o, RDF.type, schema.Person) in g):
+                print('add attendee')
+                self.add((self.mainnode, schema.attendee, no))
+        return map
+
+
+
+
 
 
 
@@ -297,23 +305,46 @@ class MyGraph(rdflib.Graph):
         #TODO
         return True
 
+    def sameEvent(self, ge):
+        # TODO
+        return True
+
+    def isPhotographGraph(self):
+        return (self.mainnode is not None) and (self.mainnode, RDF.type, my.Photograph) in self
+
+    def isEventGraph(self):
+        return (self.mainnode is not None) and (self.mainnode, RDF.type, my.Event) in self
+
 
     # update graph representing an event using graph gph representing a photograph
     def absorb_photograph(self, gph):
-        event = self.mainnode
-        photo = gph.mainnode
-        assert (event, RDF.type, my.Event) in self
-        assert (photo, RDF.type, my.Photograph) in gph
+        assert self.isEventGraph()
+        assert gph.isPhotographGraph()
         if not self.recordedIn(gph):
             return
-        nphoto = self.absorb_node(gph, photo)
+        map = self.absorb_triples(gph, {})
+        nphoto = map[gph.mainnode]
+        event = self.mainnode
         self.add((event, schema.recordedIn, nphoto))
         self.add((nphoto, schema.recordedAt, event))
 
+    def absorb_event(self, ge):
+        assert self.isEventGraph()
+        assert ge.isEventGraph()
+        if not self.sameEvent(ge):
+            return
+        map = { ge.mainnode: self.mainnode }
+        self.absorb_triples(ge, map)
 
-
-# We suppose that the publisher was at the event
-
+    def eventFromPhotograph(self):
+        assert self.isPhotographGraph()
+        g = MyGraph()
+        phlabel = self.value(subject=self.mainnode, predicate=RDFS.label)
+        main = g.bnode('Event associated to '+phlabel)
+        g.add((main, RDF.type, my.Event))
+        g.mainnode = main
+        g.absorb_photograph(self)
+        return g
 
     def elaborate_my_types(self):
         if (None, None, my.Event) in self:
