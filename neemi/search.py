@@ -40,6 +40,7 @@ def simple_keyword_search(request,keyword,service=None):
                     #print(p.serialize(format='n3'))
                     p.draw(name="search_photo")
                     ep = p.eventFromPhotograph()
+                    ep.save('ep')
                     ep.draw('eventFromPhoto', True)
             elif item.data_type=='EVENT':
                 e = MyGraph()
